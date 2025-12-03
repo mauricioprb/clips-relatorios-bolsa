@@ -175,7 +175,7 @@ function drawTable(doc: PDFKit.PDFDocument, data: ReportData) {
 
   const totalRowHeight = 18;
   ensureSpace(totalRowHeight + 40);
-  doc.rect(startX, y, totalWidth, totalRowHeight).fill("#2e7d32");
+  doc.rect(startX, y, totalWidth, totalRowHeight).fill("#3b6e15");
   doc
     .fillColor("white")
     .font("Helvetica-Bold")

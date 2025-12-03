@@ -78,7 +78,6 @@ export function DefaultActivitiesManager({
   };
 
   const deleteActivity = async (id: string) => {
-    if (!confirm("Deseja excluir esta atividade?")) return;
     await fetch(`/api/default-activities/${id}`, { method: "DELETE" });
     setActivities((prev) => prev.filter((item) => item.id !== id));
   };

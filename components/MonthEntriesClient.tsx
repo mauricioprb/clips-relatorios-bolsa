@@ -109,7 +109,6 @@ export function MonthEntriesClient({
   };
 
   const deleteEntry = async (id: string) => {
-    if (!confirm("Deseja excluir esta atividade?")) return;
     await fetch(`/api/day-entries/${id}`, { method: "DELETE" });
     setEntries((prev) => prev.filter((item) => item.id !== id));
   };
@@ -172,7 +171,7 @@ export function MonthEntriesClient({
         >
           {loadingFill
             ? "Preenchendo..."
-            : "Completar dias em branco com atividades padrão"}
+            : "Aplicar grade semanal e completar dias em branco"}
         </button>
         <button
           onClick={generatePdf}
