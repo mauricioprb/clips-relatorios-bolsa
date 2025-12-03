@@ -1,0 +1,40 @@
+{
+  "name": "ciclaro",
+  "version": "0.1.0",
+  "private": true,
+  "engines": {
+    "node": ">=20 <=22"
+  },
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "prisma:generate": "prisma generate",
+    "prisma:migrate": "prisma migrate dev"
+  },
+  "dependencies": {
+    "@prisma/adapter-pg": "^7.0.1",
+    "@prisma/client": "^7.0.1",
+    "@types/pdfkit": "^0.17.4",
+    "date-fns": "^4.1.0",
+    "jose": "^6.1.3",
+    "next": "14.2.5",
+    "pdfkit": "^0.17.2",
+    "pg": "^8.16.3",
+    "prisma": "^7.0.1",
+    "react": "^18",
+    "react-dom": "^18"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "@types/pg": "^8.15.6",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "eslint": "^8",
+    "eslint-config-next": "14.2.5",
+    "postcss": "^8",
+    "tailwindcss": "^3.4.1",
+    "typescript": "^5"
+  }
+}

@@ -1,0 +1,56 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  engineType = "binary"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Config {
+  id          String   @id @default(uuid())
+  bolsista    String
+  orientador  String
+  laboratorio String
+  bolsa       String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model WeeklySlot {
+  id          String   @id @default(uuid())
+  weekday     Int
+  startTime   String
+  endTime     String
+  description String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model DefaultActivity {
+  id          String   @id @default(uuid())
+  description String
+  hours       Float
+  priority    Int
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model DayEntry {
+  id          String   @id @default(uuid())
+  date        DateTime
+  startTime   String
+  endTime     String
+  description String
+  hours       Float
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([date])
+}
