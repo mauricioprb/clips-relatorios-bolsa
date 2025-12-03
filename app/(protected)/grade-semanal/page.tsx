@@ -1,6 +1,6 @@
 export const dynamic = "force-dynamic";
 
-import { WeeklySlotsManager } from "@/components/WeeklySlotsManager";
+import { WeeklySlotsManager } from "@/components/weekly-slots-manager";
 import { prisma } from "@/lib/prisma";
 
 export default async function GradeSemanalPage() {

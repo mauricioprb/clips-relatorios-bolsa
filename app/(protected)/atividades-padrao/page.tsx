@@ -1,6 +1,6 @@
 export const dynamic = "force-dynamic";
 
-import { DefaultActivitiesManager } from "@/components/DefaultActivitiesManager";
+import { DefaultActivitiesManager } from "@/components/default-activities-manager";
 import { prisma } from "@/lib/prisma";
 
 export default async function AtividadesPadraoPage() {

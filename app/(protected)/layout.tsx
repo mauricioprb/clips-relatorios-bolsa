@@ -1,4 +1,4 @@
-import { TopBar } from "@/components/TopBar";
+import { TopBar } from "@/components/top-bar";
 import { ReactNode } from "react";
 
 export default function ProtectedLayout({ children }: { children: ReactNode }) {

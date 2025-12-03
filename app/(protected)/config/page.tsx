@@ -1,6 +1,6 @@
 export const dynamic = "force-dynamic";
 
-import { ConfigForm } from "@/components/ConfigForm";
+import { ConfigForm } from "@/components/config-form";
 import { prisma } from "@/lib/prisma";
 
 export default async function ConfigPage() {

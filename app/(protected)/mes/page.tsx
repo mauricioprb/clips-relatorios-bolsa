@@ -1,6 +1,6 @@
 export const dynamic = "force-dynamic";
 
-import { MonthEntriesClient } from "@/components/MonthEntriesClient";
+import { MonthEntriesClient } from "@/components/month-entries-client";
 import { getMonthRange } from "@/lib/dates";
 import { prisma } from "@/lib/prisma";
 
