@@ -2,6 +2,9 @@ export const dynamic = "force-dynamic";
 
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
+import { Suspense } from "react";
+import { CalendarSkeleton } from "@/components/calendar/skeletons/calendar-skeleton";
+import { Calendar } from "@/components/calendar/calendar";
 
 export default async function Dashboard() {
   const [config, weeklyCount, defaultsCount, entriesCount] = await Promise.all([
@@ -73,6 +76,9 @@ export default async function Dashboard() {
           <li>Gere o PDF do relatório e envie para o orientador.</li>
         </ol>
       </div>
+        <Suspense fallback={<CalendarSkeleton />}>
+      <Calendar />
+    </Suspense>
     </div>
   );
 }

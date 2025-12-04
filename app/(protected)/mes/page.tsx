@@ -1,8 +1,8 @@
 export const dynamic = "force-dynamic";
 
-import { MonthEntriesClient } from "@/components/month-entries-client";
-import { getMonthRange } from "@/lib/dates";
-import { prisma } from "@/lib/prisma";
+import { Suspense } from "react";
+import { Calendar } from "@/components/calendar/calendar";
+import { CalendarSkeleton } from "@/components/calendar/skeletons/calendar-skeleton";
 
 type Props = {
   searchParams: { ano?: string; mes?: string };
@@ -12,21 +12,6 @@ export default async function MesPage({ searchParams }: Props) {
   const today = new Date();
   const year = Number(searchParams?.ano) || today.getFullYear();
   const month = Number(searchParams?.mes) || today.getMonth() + 1;
-
-  const { start, end } = getMonthRange(year, month);
-  const entries = await prisma.dayEntry.findMany({
-    where: { date: { gte: start, lt: end } },
-    orderBy: [{ date: "asc" }, { startTime: "asc" }],
-  });
-
-  const serialized = entries.map((entry) => ({
-    id: entry.id,
-    date: entry.date.toISOString(),
-    startTime: entry.startTime,
-    endTime: entry.endTime,
-    description: entry.description,
-    hours: entry.hours,
-  }));
 
   return (
     <div className="space-y-4">
@@ -40,11 +25,10 @@ export default async function MesPage({ searchParams }: Props) {
           {month.toString().padStart(2, "0")}/{year}.
         </p>
       </div>
-      <MonthEntriesClient
-        year={year}
-        month={month}
-        initialEntries={serialized}
-      />
+      <Suspense fallback={<CalendarSkeleton />}>
+        <Calendar year={year} month={month} />
+      </Suspense>
+      
     </div>
   );
 }

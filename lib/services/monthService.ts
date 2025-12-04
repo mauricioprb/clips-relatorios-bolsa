@@ -82,18 +82,26 @@ class MonthService {
       );
 
       for (const slot of slotsForDay) {
-        const alreadyExists = dayEntries.some(
-          (entry) =>
-            entry.description === slot.description &&
-            entry.startTime === slot.startTime &&
-            entry.endTime === slot.endTime
+        const hours = Math.max(calculateHours(slot.startTime, slot.endTime), 0);
+        const existingMatch = dayEntries.find(
+          (entry) => entry.description === slot.description
         );
-        if (alreadyExists) continue;
 
-        const hours = Math.max(
-          calculateHours(slot.startTime, slot.endTime),
-          0
-        );
+        if (existingMatch) {
+          const updated = await prisma.dayEntry.update({
+            where: { id: existingMatch.id },
+            data: {
+              startTime: slot.startTime,
+              endTime: slot.endTime,
+              hours,
+            },
+          });
+          const idx = dayEntries.findIndex((e) => e.id === existingMatch.id);
+          if (idx >= 0) {
+            dayEntries[idx] = updated;
+          }
+          continue;
+        }
 
         const entry = await prisma.dayEntry.create({
           data: {
