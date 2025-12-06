@@ -4,340 +4,322 @@ import type React from "react";
 import { createContext, useContext, useEffect, useState } from "react";
 import { useLocalStorage } from "@/components/calendar/hooks";
 import type { IEvent, IUser } from "@/components/calendar/interfaces";
-import type {
-	TCalendarView,
-	TEventColor,
-} from "@/components/calendar/types";
+import type { TCalendarView, TEventColor } from "@/components/calendar/types";
 
 interface ICalendarContext {
-	selectedDate: Date;
-	view: TCalendarView;
-	setView: (view: TCalendarView) => void;
-	agendaModeGroupBy: "date" | "color";
-	setAgendaModeGroupBy: (groupBy: "date" | "color") => void;
-	use24HourFormat: boolean;
-	toggleTimeFormat: () => void;
-	setSelectedDate: (date: Date | undefined) => void;
-	selectedUserId: IUser["id"] | "all";
-	setSelectedUserId: (userId: IUser["id"] | "all") => void;
-	badgeVariant: "dot" | "colored";
-	setBadgeVariant: (variant: "dot" | "colored") => void;
-	selectedColors: TEventColor[];
-	filterEventsBySelectedColors: (colors: TEventColor) => void;
-	filterEventsBySelectedUser: (userId: IUser["id"] | "all") => void;
-	users: IUser[];
-	events: IEvent[];
-	addEvent: (event: IEvent) => void;
-	updateEvent: (event: IEvent) => void;
-	removeEvent: (eventId: string) => void;
-	refreshMonth: (year: number, month: number) => Promise<void>;
-	clearFilter: () => void;
+  selectedDate: Date;
+  view: TCalendarView;
+  setView: (view: TCalendarView) => void;
+  agendaModeGroupBy: "date" | "color";
+  setAgendaModeGroupBy: (groupBy: "date" | "color") => void;
+  use24HourFormat: boolean;
+  toggleTimeFormat: () => void;
+  setSelectedDate: (date: Date | undefined) => void;
+  selectedUserId: IUser["id"] | "all";
+  setSelectedUserId: (userId: IUser["id"] | "all") => void;
+  badgeVariant: "dot" | "colored";
+  setBadgeVariant: (variant: "dot" | "colored") => void;
+  selectedColors: TEventColor[];
+  filterEventsBySelectedColors: (colors: TEventColor) => void;
+  filterEventsBySelectedUser: (userId: IUser["id"] | "all") => void;
+  users: IUser[];
+  events: IEvent[];
+  addEvent: (event: IEvent) => void;
+  updateEvent: (event: IEvent) => void;
+  removeEvent: (eventId: string) => void;
+  refreshMonth: (year: number, month: number) => Promise<void>;
+  clearFilter: () => void;
 }
 
 interface CalendarSettings {
-	badgeVariant: "dot" | "colored";
-	view: TCalendarView;
-	use24HourFormat: boolean;
-	agendaModeGroupBy: "date" | "color";
+  badgeVariant: "dot" | "colored";
+  view: TCalendarView;
+  use24HourFormat: boolean;
+  agendaModeGroupBy: "date" | "color";
 }
 
 const DEFAULT_SETTINGS: CalendarSettings = {
-	badgeVariant: "colored",
-	view: "month",
-	use24HourFormat: true,
-	agendaModeGroupBy: "date",
+  badgeVariant: "colored",
+  view: "month",
+  use24HourFormat: true,
+  agendaModeGroupBy: "date",
 };
+
+// tipo da resposta da API /api/day-entries
+interface DayEntryApi {
+  id: string;
+  date: string; // ISO date (sem hora ou com hora, mas usamos só a parte de data)
+  startTime?: string | null; // "HH:mm"
+  endTime?: string | null; // "HH:mm"
+  description: string;
+}
 
 const CalendarContext = createContext({} as ICalendarContext);
 
 export function CalendarProvider({
-	children,
-	users,
-	events,
-	badge = "colored",
-	view = "day",
-	initialDate,
+  children,
+  users,
+  events,
+  badge = "colored",
+  view = "day",
+  initialDate,
 }: {
-	children: React.ReactNode;
-	users: IUser[];
-	events: IEvent[];
-	view?: TCalendarView;
-	badge?: "dot" | "colored";
-	initialDate?: Date;
+  children: React.ReactNode;
+  users: IUser[];
+  events: IEvent[];
+  view?: TCalendarView;
+  badge?: "dot" | "colored";
+  initialDate?: Date;
 }) {
-	const [settings, setSettings] = useLocalStorage<CalendarSettings>(
-		"calendar-settings",
-		{
-			...DEFAULT_SETTINGS,
-			badgeVariant: badge,
-			view: view,
-		},
-	);
+  const [settings, setSettings] = useLocalStorage<CalendarSettings>("calendar-settings", {
+    ...DEFAULT_SETTINGS,
+    badgeVariant: badge,
+    view: view,
+  });
 
-	const [badgeVariant, setBadgeVariantState] = useState<"dot" | "colored">(
-		settings.badgeVariant,
-	);
-	const [currentView, setCurrentViewState] = useState<TCalendarView>(
-		settings.view,
-	);
-	const [use24HourFormat, setUse24HourFormatState] = useState<boolean>(
-		settings.use24HourFormat,
-	);
-	const [agendaModeGroupBy, setAgendaModeGroupByState] = useState<
-		"date" | "color"
-	>(settings.agendaModeGroupBy);
+  const [badgeVariant, setBadgeVariantState] = useState<"dot" | "colored">(settings.badgeVariant);
+  const [currentView, setCurrentViewState] = useState<TCalendarView>(settings.view);
+  const [use24HourFormat, setUse24HourFormatState] = useState<boolean>(settings.use24HourFormat);
+  const [agendaModeGroupBy, setAgendaModeGroupByState] = useState<"date" | "color">(
+    settings.agendaModeGroupBy,
+  );
 
-	const [selectedDate, setSelectedDate] = useState(initialDate || new Date());
-	const [selectedUserId, setSelectedUserId] = useState<IUser["id"] | "all">(
-		"all",
-	);
-	const [selectedColors, setSelectedColors] = useState<TEventColor[]>([]);
+  const [selectedDate, setSelectedDate] = useState(initialDate || new Date());
+  const [selectedUserId, setSelectedUserId] = useState<IUser["id"] | "all">("all");
+  const [selectedColors, setSelectedColors] = useState<TEventColor[]>([]);
 
-	const [allEvents, setAllEvents] = useState<IEvent[]>(events || []);
-	const [filteredEvents, setFilteredEvents] = useState<IEvent[]>(events || []);
-	const defaultUser =
-		users?.[0] || { id: "main-user", name: "Bolsista", picturePath: null };
-	const monthKey = `${selectedDate.getFullYear()}-${selectedDate.getMonth() + 1}`;
+  const [allEvents, setAllEvents] = useState<IEvent[]>(events || []);
+  const [filteredEvents, setFilteredEvents] = useState<IEvent[]>(events || []);
+  const defaultUser = users?.[0] || { id: "main-user", name: "Bolsista", picturePath: null };
+  const monthKey = `${selectedDate.getFullYear()}-${selectedDate.getMonth() + 1}`;
 
-	const eventToPayload = (event: IEvent) => {
-		const start = new Date(event.startDate);
-		const end = new Date(event.endDate);
-		const dateOnly = new Date(Date.UTC(start.getFullYear(), start.getMonth(), start.getDate()));
+  const eventToPayload = (event: IEvent) => {
+    const start = new Date(event.startDate);
+    const end = new Date(event.endDate);
+    const dateOnly = new Date(Date.UTC(start.getFullYear(), start.getMonth(), start.getDate()));
 
-		const formatTime = (d: Date) =>
-			`${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
+    const formatTime = (d: Date) =>
+      `${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
 
-		const startTime = formatTime(start);
-		const endTime = formatTime(end);
+    const startTime = formatTime(start);
+    const endTime = formatTime(end);
 
-		return {
-			date: dateOnly.toISOString(),
-			startTime,
-			endTime,
-			description: event.title || event.description,
-		};
-	};
+    return {
+      date: dateOnly.toISOString(),
+      startTime,
+      endTime,
+      description: event.title || event.description,
+    };
+  };
 
-	const dayEntryToEvent = (entry: any): IEvent => {
-		const date = new Date(entry.date);
-		const start = entry.startTime || "00:00";
-		const end = entry.endTime || start;
-		const yyyy = date.getUTCFullYear();
-		const mm = String(date.getUTCMonth() + 1).padStart(2, "0");
-		const dd = String(date.getUTCDate()).padStart(2, "0");
-		const startDate = `${yyyy}-${mm}-${dd}T${start}:00`;
-		const endDate = `${yyyy}-${mm}-${dd}T${end}:00`;
+  const dayEntryToEvent = (entry: DayEntryApi): IEvent => {
+    const date = new Date(entry.date);
+    const start = entry.startTime || "00:00";
+    const end = entry.endTime || start;
 
-		return {
-			id: entry.id,
-			startDate,
-			endDate,
-			title: entry.description,
-			color: "blue",
-			description: entry.description,
-			user: defaultUser,
-		};
-	};
+    const yyyy = date.getUTCFullYear();
+    const mm = String(date.getUTCMonth() + 1).padStart(2, "0");
+    const dd = String(date.getUTCDate()).padStart(2, "0");
 
-	const persistCreate = async (event: IEvent) => {
-		const payload = eventToPayload(event);
-		const res = await fetch("/api/day-entries", {
-			method: "POST",
-			headers: { "Content-Type": "application/json" },
-			body: JSON.stringify(payload),
-		});
-		if (!res.ok) return null;
-		const saved = await res.json();
-		return dayEntryToEvent(saved);
-	};
+    const startDate = `${yyyy}-${mm}-${dd}T${start}:00`;
+    const endDate = `${yyyy}-${mm}-${dd}T${end}:00`;
 
-	const persistUpdate = async (event: IEvent) => {
-		if (!event.id) return null;
-		const payload = eventToPayload(event);
-		const res = await fetch(`/api/day-entries/${event.id}`, {
-			method: "PUT",
-			headers: { "Content-Type": "application/json" },
-			body: JSON.stringify(payload),
-		});
-		if (!res.ok) return null;
-		const saved = await res.json();
-		return dayEntryToEvent(saved);
-	};
+    return {
+      id: entry.id,
+      startDate,
+      endDate,
+      title: entry.description,
+      color: "blue",
+      description: entry.description,
+      user: defaultUser,
+    };
+  };
 
-	const persistDelete = async (eventId: string) => {
-		await fetch(`/api/day-entries/${eventId}`, { method: "DELETE" });
-	};
+  const persistCreate = async (event: IEvent): Promise<IEvent | null> => {
+    const payload = eventToPayload(event);
+    const res = await fetch("/api/day-entries", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+    if (!res.ok) return null;
+    const saved = (await res.json()) as DayEntryApi;
+    return dayEntryToEvent(saved);
+  };
 
-	const fetchEntries = async (year: number, month: number) => {
-		const res = await fetch(`/api/day-entries?ano=${year}&mes=${month}`);
-		if (!res.ok) return null;
-		const data = await res.json();
-		return Array.isArray(data) ? data.map(dayEntryToEvent) : null;
-	};
+  const persistUpdate = async (event: IEvent): Promise<IEvent | null> => {
+    if (!event.id) return null;
+    const payload = eventToPayload(event);
+    const res = await fetch(`/api/day-entries/${event.id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+    if (!res.ok) return null;
+    const saved = (await res.json()) as DayEntryApi;
+    return dayEntryToEvent(saved);
+  };
 
-	const updateSettings = (newPartialSettings: Partial<CalendarSettings>) => {
-		setSettings({
-			...settings,
-			...newPartialSettings,
-		});
-	};
+  const persistDelete = async (eventId: string): Promise<void> => {
+    await fetch(`/api/day-entries/${eventId}`, { method: "DELETE" });
+  };
 
-	const setBadgeVariant = (variant: "dot" | "colored") => {
-		setBadgeVariantState(variant);
-		updateSettings({ badgeVariant: variant });
-	};
+  const fetchEntries = async (year: number, month: number): Promise<IEvent[] | null> => {
+    const res = await fetch(`/api/day-entries?ano=${year}&mes=${month}`);
+    if (!res.ok) return null;
+    const data = (await res.json()) as DayEntryApi[];
+    return Array.isArray(data) ? data.map(dayEntryToEvent) : null;
+  };
 
-	const setView = (newView: TCalendarView) => {
-		setCurrentViewState(newView);
-		updateSettings({ view: newView });
-	};
+  const updateSettings = (newPartialSettings: Partial<CalendarSettings>) => {
+    setSettings({
+      ...settings,
+      ...newPartialSettings,
+    });
+  };
 
-	const toggleTimeFormat = () => {
-		const newValue = !use24HourFormat;
-		setUse24HourFormatState(newValue);
-		updateSettings({ use24HourFormat: newValue });
-	};
+  const setBadgeVariant = (variant: "dot" | "colored") => {
+    setBadgeVariantState(variant);
+    updateSettings({ badgeVariant: variant });
+  };
 
-	const setAgendaModeGroupBy = (groupBy: "date" | "color") => {
-		setAgendaModeGroupByState(groupBy);
-		updateSettings({ agendaModeGroupBy: groupBy });
-	};
+  const setView = (newView: TCalendarView) => {
+    setCurrentViewState(newView);
+    updateSettings({ view: newView });
+  };
 
-	const filterEventsBySelectedColors = (color: TEventColor) => {
-		const isColorSelected = selectedColors.includes(color);
-		const newColors = isColorSelected
-			? selectedColors.filter((c) => c !== color)
-			: [...selectedColors, color];
+  const toggleTimeFormat = () => {
+    const newValue = !use24HourFormat;
+    setUse24HourFormatState(newValue);
+    updateSettings({ use24HourFormat: newValue });
+  };
 
-		if (newColors.length > 0) {
-			const filtered = allEvents.filter((event) => {
-				const eventColor = event.color || "blue";
-				return newColors.includes(eventColor);
-			});
-			setFilteredEvents(filtered);
-		} else {
-			setFilteredEvents(allEvents);
-		}
+  const setAgendaModeGroupBy = (groupBy: "date" | "color") => {
+    setAgendaModeGroupByState(groupBy);
+    updateSettings({ agendaModeGroupBy: groupBy });
+  };
 
-		setSelectedColors(newColors);
-	};
+  const filterEventsBySelectedColors = (color: TEventColor) => {
+    const isColorSelected = selectedColors.includes(color);
+    const newColors = isColorSelected
+      ? selectedColors.filter((c) => c !== color)
+      : [...selectedColors, color];
 
-	const filterEventsBySelectedUser = (userId: IUser["id"] | "all") => {
-		setSelectedUserId(userId);
-		if (userId === "all") {
-			setFilteredEvents(allEvents);
-		} else {
-			const filtered = allEvents.filter((event) => event.user.id === userId);
-			setFilteredEvents(filtered);
-		}
-	};
+    if (newColors.length > 0) {
+      const filtered = allEvents.filter((event) => {
+        const eventColor = event.color || "blue";
+        return newColors.includes(eventColor);
+      });
+      setFilteredEvents(filtered);
+    } else {
+      setFilteredEvents(allEvents);
+    }
 
-	const handleSelectDate = (date: Date | undefined) => {
-		if (!date) return;
-		setSelectedDate(date);
-	};
+    setSelectedColors(newColors);
+  };
 
-	const addEvent = (event: IEvent) => {
-		void (async () => {
-			const saved = await persistCreate(event);
-			const toAdd = saved || event;
-			setAllEvents((prev) => [...prev, toAdd]);
-			setFilteredEvents((prev) => [...prev, toAdd]);
-			await refreshMonth(selectedDate.getFullYear(), selectedDate.getMonth() + 1);
-		})();
-	};
+  const filterEventsBySelectedUser = (userId: IUser["id"] | "all") => {
+    setSelectedUserId(userId);
+    if (userId === "all") {
+      setFilteredEvents(allEvents);
+    } else {
+      const filtered = allEvents.filter((event) => event.user.id === userId);
+      setFilteredEvents(filtered);
+    }
+  };
 
-	const updateEvent = (event: IEvent) => {
-		void (async () => {
-			const saved = await persistUpdate(event);
-			const updated =
-				saved ||
-				{
-					...event,
-					startDate: new Date(event.startDate).toISOString(),
-					endDate: new Date(event.endDate).toISOString(),
-				};
+  const handleSelectDate = (date: Date | undefined) => {
+    if (!date) return;
+    setSelectedDate(date);
+  };
 
-			setAllEvents((prev) =>
-				prev.map((e) => (e.id === event.id ? updated : e)),
-			);
-			setFilteredEvents((prev) =>
-				prev.map((e) => (e.id === event.id ? updated : e)),
-			);
-			await refreshMonth(selectedDate.getFullYear(), selectedDate.getMonth() + 1);
-		})();
-	};
+  const addEvent = (event: IEvent) => {
+    void (async () => {
+      const saved = await persistCreate(event);
+      const toAdd = saved || event;
+      setAllEvents((prev) => [...prev, toAdd]);
+      setFilteredEvents((prev) => [...prev, toAdd]);
+      await refreshMonth(selectedDate.getFullYear(), selectedDate.getMonth() + 1);
+    })();
+  };
 
-	const removeEvent = (eventId: string) => {
-		void (async () => {
-			await persistDelete(eventId);
-			setAllEvents((prev) => prev.filter((e) => e.id !== eventId));
-			setFilteredEvents((prev) => prev.filter((e) => e.id !== eventId));
-			await refreshMonth(selectedDate.getFullYear(), selectedDate.getMonth() + 1);
-		})();
-	};
+  const updateEvent = (event: IEvent) => {
+    void (async () => {
+      const saved = await persistUpdate(event);
+      const updated = saved || {
+        ...event,
+        startDate: new Date(event.startDate).toISOString(),
+        endDate: new Date(event.endDate).toISOString(),
+      };
 
-	const refreshMonth = async (year: number, month: number) => {
-		const refreshed = await fetchEntries(year, month);
-		if (!refreshed) return;
-		setAllEvents(refreshed);
-		setFilteredEvents(refreshed);
-	};
+      setAllEvents((prev) => prev.map((e) => (e.id === event.id ? updated : e)));
+      setFilteredEvents((prev) => prev.map((e) => (e.id === event.id ? updated : e)));
+      await refreshMonth(selectedDate.getFullYear(), selectedDate.getMonth() + 1);
+    })();
+  };
 
-	useEffect(() => {
-		void (async () => {
-			const refreshed = await fetchEntries(
-				selectedDate.getFullYear(),
-				selectedDate.getMonth() + 1,
-			);
-			if (!refreshed) return;
-			setAllEvents(refreshed);
-			setFilteredEvents(refreshed);
-		})();
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [monthKey]);
+  const removeEvent = (eventId: string) => {
+    void (async () => {
+      await persistDelete(eventId);
+      setAllEvents((prev) => prev.filter((e) => e.id !== eventId));
+      setFilteredEvents((prev) => prev.filter((e) => e.id !== eventId));
+      await refreshMonth(selectedDate.getFullYear(), selectedDate.getMonth() + 1);
+    })();
+  };
 
-	const clearFilter = () => {
-		setFilteredEvents(allEvents);
-		setSelectedColors([]);
-		setSelectedUserId("all");
-	};
+  const refreshMonth = async (year: number, month: number) => {
+    const refreshed = await fetchEntries(year, month);
+    if (!refreshed) return;
+    setAllEvents(refreshed);
+    setFilteredEvents(refreshed);
+  };
 
-	const value = {
-		selectedDate,
-		setSelectedDate: handleSelectDate,
-		selectedUserId,
-		setSelectedUserId,
-		badgeVariant,
-		setBadgeVariant,
-		users,
-		selectedColors,
-		filterEventsBySelectedColors,
-		filterEventsBySelectedUser,
-		events: filteredEvents,
-		view: currentView,
-		use24HourFormat,
-		toggleTimeFormat,
-		setView,
-		agendaModeGroupBy,
-		setAgendaModeGroupBy,
-		addEvent,
-		updateEvent,
-		removeEvent,
-		refreshMonth,
-		clearFilter,
-	};
+  useEffect(() => {
+    void (async () => {
+      const refreshed = await fetchEntries(selectedDate.getFullYear(), selectedDate.getMonth() + 1);
+      if (!refreshed) return;
+      setAllEvents(refreshed);
+      setFilteredEvents(refreshed);
+    })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [monthKey]);
 
-	return (
-		<CalendarContext.Provider value={value}>
-			{children}
-		</CalendarContext.Provider>
-	);
+  const clearFilter = () => {
+    setFilteredEvents(allEvents);
+    setSelectedColors([]);
+    setSelectedUserId("all");
+  };
+
+  const value: ICalendarContext = {
+    selectedDate,
+    setSelectedDate: handleSelectDate,
+    selectedUserId,
+    setSelectedUserId,
+    badgeVariant,
+    setBadgeVariant,
+    users,
+    selectedColors,
+    filterEventsBySelectedColors,
+    filterEventsBySelectedUser,
+    events: filteredEvents,
+    view: currentView,
+    use24HourFormat,
+    toggleTimeFormat,
+    setView,
+    agendaModeGroupBy,
+    setAgendaModeGroupBy,
+    addEvent,
+    updateEvent,
+    removeEvent,
+    refreshMonth,
+    clearFilter,
+  };
+
+  return <CalendarContext.Provider value={value}>{children}</CalendarContext.Provider>;
 }
 
 export function useCalendar(): ICalendarContext {
-	const context = useContext(CalendarContext);
-	if (!context)
-		throw new Error("useCalendar must be used within a CalendarProvider.");
-	return context;
+  const context = useContext(CalendarContext);
+  if (!context) throw new Error("useCalendar must be used within a CalendarProvider.");
+  return context;
 }

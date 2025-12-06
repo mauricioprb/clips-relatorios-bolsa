@@ -9,17 +9,17 @@ export async function POST(req: NextRequest) {
   if (!year || !month) {
     return NextResponse.json(
       { message: "Informe ano e mês no corpo da requisição." },
-      { status: 400 }
+      { status: 400 },
     );
   }
 
   try {
     const result = await monthService.fillBlanks(year, month);
     return NextResponse.json(result);
-  } catch (error: any) {
+  } catch (error: unknown) {
     return NextResponse.json(
-      { message: error?.message || "Erro ao preencher dias" },
-      { status: 400 }
+      { message: error instanceof Error ? error.message : "Erro ao preencher dias" },
+      { status: 400 },
     );
   }
 }

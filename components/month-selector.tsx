@@ -1,21 +1,16 @@
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
-import { useState, useEffect } from "react";
+import React, { useState } from "react";
 
 export function MonthSelector() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const current = new Date();
-  const initialYear = Number(searchParams.get("ano")) || current.getFullYear();
-  const initialMonth = Number(searchParams.get("mes")) || current.getMonth() + 1;
-  const [year, setYear] = useState(initialYear);
-  const [month, setMonth] = useState(initialMonth);
-
-  useEffect(() => {
-    setYear(initialYear);
-    setMonth(initialMonth);
-  }, [initialYear, initialMonth]);
+  const [year, setYear] = useState(() => Number(searchParams.get("ano")) || current.getFullYear());
+  const [month, setMonth] = useState(
+    () => Number(searchParams.get("mes")) || current.getMonth() + 1,
+  );
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault();

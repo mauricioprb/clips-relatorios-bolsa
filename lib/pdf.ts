@@ -1,4 +1,4 @@
-const PDFDocument = require("pdfkit");
+import PDFDocument from "pdfkit";
 import path from "path";
 import fs from "fs";
 import { ReportData } from "./report";
@@ -20,34 +20,32 @@ export async function generateReportPdf(data: ReportData) {
     const logosHeight = drawLogos(doc);
     doc.y = doc.page.margins.top + logosHeight + 24; // espaço extra abaixo dos logos
 
-   doc.font("Helvetica").fontSize(11);
+    doc.font("Helvetica").fontSize(11);
 
-// Bolsista
-doc.text("Bolsista: ", { continued: true });
-doc.font("Helvetica-Bold").text(`${data.config.bolsista}`);
-doc.font("Helvetica");
+    // Bolsista
+    doc.text("Bolsista: ", { continued: true });
+    doc.font("Helvetica-Bold").text(`${data.config.bolsista}`);
+    doc.font("Helvetica");
 
-// Orientador
-doc.text("Orientador: ", { continued: true });
-doc.font("Helvetica-Bold").text(`${data.config.orientador}`);
-doc.font("Helvetica");
+    // Orientador
+    doc.text("Orientador: ", { continued: true });
+    doc.font("Helvetica-Bold").text(`${data.config.orientador}`);
+    doc.font("Helvetica");
 
-// Laboratório / Sala
-doc.text("Laboratório / Sala: ", { continued: true });
-doc.font("Helvetica-Bold").text(`${data.config.laboratorio}`);
-doc.font("Helvetica");
+    // Laboratório / Sala
+    doc.text("Laboratório / Sala: ", { continued: true });
+    doc.font("Helvetica-Bold").text(`${data.config.laboratorio}`);
+    doc.font("Helvetica");
 
-// Bolsa
-doc.text("Bolsa: ", { continued: true });
-doc.font("Helvetica-Bold").text(`${data.config.bolsa}`);
-doc.font("Helvetica");
+    // Bolsa
+    doc.text("Bolsa: ", { continued: true });
+    doc.font("Helvetica-Bold").text(`${data.config.bolsa}`);
+    doc.font("Helvetica");
 
-// Mês/Ano
-doc.text("Mês/Ano: ", { continued: true });
-doc.font("Helvetica-Bold").text(
-  `${String(data.month).padStart(2, "0")}/${data.year}`
-);
-doc.font("Helvetica");
+    // Mês/Ano
+    doc.text("Mês/Ano: ", { continued: true });
+    doc.font("Helvetica-Bold").text(`${String(data.month).padStart(2, "0")}/${data.year}`);
+    doc.font("Helvetica");
 
     doc.moveDown();
     drawTable(doc, data);
@@ -58,18 +56,12 @@ doc.font("Helvetica");
 }
 
 function setPdfkitDataPath() {
-  const dataDir = path.join(
-    process.cwd(),
-    "node_modules",
-    "pdfkit",
-    "js",
-    "data"
-  );
+  const dataDir = path.join(process.cwd(), "node_modules", "pdfkit", "js", "data");
   if (fs.existsSync(dataDir)) {
-    const fontApi = (PDFDocument as any).PDFFont;
+    const fontApi = (PDFDocument as unknown as { PDFFont?: unknown }).PDFFont;
     if (fontApi && typeof fontApi === "function") {
       // pdfkit expõe PDFFont.dataPath
-      (fontApi as any).dataPath = dataDir;
+      (fontApi as { dataPath?: string }).dataPath = dataDir;
     }
   }
 }
@@ -100,15 +92,14 @@ function drawLogos(doc: PDFKit.PDFDocument) {
 
 function drawTable(doc: PDFKit.PDFDocument, data: ReportData) {
   const startX = doc.page.margins.left;
-  const usableWidth =
-    doc.page.width - doc.page.margins.left - doc.page.margins.right;
+  const usableWidth = doc.page.width - doc.page.margins.left - doc.page.margins.right;
 
   const columnWidths = [90, 180, usableWidth - (90 + 180 + 90), 90];
   const totalWidth = columnWidths.reduce((sum, w) => sum + w, 0);
   let y = doc.y;
 
   const padX = pad; // padding horizontal
-  const padY = 2;   // padding vertical menor
+  const padY = 2; // padding vertical menor
   const headerHeight = 18;
 
   const drawHeader = () => {
@@ -116,14 +107,10 @@ function drawTable(doc: PDFKit.PDFDocument, data: ReportData) {
     const headers = ["Data", "Horário", "Atividades", "Carga horária"];
     let x = startX;
     headers.forEach((text, index) => {
-      doc
-        .rect(x, y, columnWidths[index], headerHeight)
-        .fillAndStroke("#d9d9d9", "black");
-      doc
-        .fillColor("black")
-        .text(text, x + padX, y + 4, {
-          width: columnWidths[index] - padX * 2,
-        });
+      doc.rect(x, y, columnWidths[index], headerHeight).fillAndStroke("#d9d9d9", "black");
+      doc.fillColor("black").text(text, x + padX, y + 4, {
+        width: columnWidths[index] - padX * 2,
+      });
       x += columnWidths[index];
     });
     y += headerHeight;
@@ -152,7 +139,7 @@ function drawTable(doc: PDFKit.PDFDocument, data: ReportData) {
       doc.heightOfString(text, {
         width: columnWidths[index] - padX * 2,
         align: "left",
-      })
+      }),
     );
 
     const rowHeight = Math.max(...heights) + padY * 2;
@@ -161,10 +148,7 @@ function drawTable(doc: PDFKit.PDFDocument, data: ReportData) {
 
     let x = startX;
     values.forEach((text, index) => {
-      doc
-        .rect(x, y, columnWidths[index], rowHeight)
-        .lineWidth(0.6)
-        .stroke();
+      doc.rect(x, y, columnWidths[index], rowHeight).lineWidth(0.6).stroke();
       doc.text(text, x + padX, y + padY, {
         width: columnWidths[index] - padX * 2,
       });
@@ -183,27 +167,27 @@ function drawTable(doc: PDFKit.PDFDocument, data: ReportData) {
       width: totalWidth - padX * 2,
       align: "left",
     });
-  doc.text(
-    formatHoursValue(data.totalHours),
-    startX,
-    y + 4,
-    {
-      width: totalWidth - padX,
-      align: "right",
-    }
-  );
+  doc.text(formatHoursValue(data.totalHours), startX, y + 4, {
+    width: totalWidth - padX,
+    align: "right",
+  });
   y += totalRowHeight + 30;
 }
 
 function drawSignatures(doc: PDFKit.PDFDocument) {
-  const pageWidth =
-    doc.page.width - doc.page.margins.left - doc.page.margins.right;
+  const pageWidth = doc.page.width - doc.page.margins.left - doc.page.margins.right;
   const startX = doc.page.margins.left;
   const midX = startX + pageWidth / 2;
   const y = doc.page.height - doc.page.margins.bottom - 60;
 
-  doc.moveTo(startX + 40, y).lineTo(startX + 200, y).stroke();
-  doc.moveTo(midX + 40, y).lineTo(midX + 200, y).stroke();
+  doc
+    .moveTo(startX + 40, y)
+    .lineTo(startX + 200, y)
+    .stroke();
+  doc
+    .moveTo(midX + 40, y)
+    .lineTo(midX + 200, y)
+    .stroke();
 
   doc.font("Helvetica").fontSize(10).fillColor("black");
   doc.text("Aluno", startX + 40, y + 8, { width: 160, align: "center" });

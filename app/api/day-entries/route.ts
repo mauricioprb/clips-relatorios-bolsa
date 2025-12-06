@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 import { dayEntryService } from "@/lib/services/dayEntryService";
-import { getMonthRange } from "@/lib/dates";
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
@@ -11,7 +10,6 @@ export async function GET(req: NextRequest) {
   if (yearParam && monthParam) {
     const year = Number(yearParam);
     const month = Number(monthParam);
-    const { start, end } = getMonthRange(year, month);
     entries = await dayEntryService.listByMonth(year, month);
   } else {
     entries = await dayEntryService.listAll();
@@ -24,10 +22,7 @@ export async function POST(req: NextRequest) {
   const { date, startTime, endTime, description, hours } = await req.json();
 
   if (!date || !description) {
-    return NextResponse.json(
-      { message: "Data e descrição são obrigatórias." },
-      { status: 400 }
-    );
+    return NextResponse.json({ message: "Data e descrição são obrigatórias." }, { status: 400 });
   }
 
   const entry = await dayEntryService.create({

@@ -3,13 +3,10 @@ import { reportService } from "@/lib/services/reportService";
 
 async function getParams(req: NextRequest) {
   const { searchParams } = new URL(req.url);
-  const body =
-    req.method === "POST" ? await req.json().catch(() => ({})) : undefined;
+  const body = req.method === "POST" ? await req.json().catch(() => ({})) : undefined;
 
-  const year =
-    Number(body?.ano ?? body?.year ?? searchParams.get("ano")) || undefined;
-  const month =
-    Number(body?.mes ?? body?.month ?? searchParams.get("mes")) || undefined;
+  const year = Number(body?.ano ?? body?.year ?? searchParams.get("ano")) || undefined;
+  const month = Number(body?.mes ?? body?.month ?? searchParams.get("mes")) || undefined;
   return { year, month };
 }
 
@@ -18,30 +15,32 @@ async function handler(req: NextRequest) {
   if (!year || !month) {
     return NextResponse.json(
       { message: "Informe ano e mês (ex: ano=2025&mes=3)" },
-      { status: 400 }
+      { status: 400 },
     );
   }
 
   try {
     const pdfBuffer = await reportService.generatePdf(year, month);
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return new NextResponse(pdfBuffer as any, {
       status: 200,
       headers: {
         "Content-Type": "application/pdf",
-        "Content-Disposition": `attachment; filename="relatorio-${year}-${String(
-          month
-        ).padStart(2, "0")}.pdf"`,
+        "Content-Disposition": `attachment; filename="relatorio-${year}-${String(month).padStart(
+          2,
+          "0",
+        )}.pdf"`,
       },
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Erro ao gerar PDF do relatório", error);
     return NextResponse.json(
       {
-        message: error?.message || "Erro ao gerar PDF",
+        message: error instanceof Error ? error.message : "Erro ao gerar PDF",
         detail: typeof error === "object" ? error : String(error),
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

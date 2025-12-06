@@ -3,7 +3,7 @@ import { SESSION_COOKIE, verifySessionToken } from "./lib/auth";
 
 const PUBLIC_PATHS = ["/login", "/api/login"];
 
-export async function middleware(req: NextRequest) {
+export async function proxy(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
   if (
@@ -15,18 +15,16 @@ export async function middleware(req: NextRequest) {
   }
 
   if (PUBLIC_PATHS.some((path) => pathname.startsWith(path))) {
-    const existingSession = await verifySessionToken(
-      req.cookies.get(SESSION_COOKIE)?.value
-    );
+    const existingSession = await verifySessionToken(req.cookies.get(SESSION_COOKIE)?.value);
+
     if (existingSession && pathname === "/login") {
       return NextResponse.redirect(new URL("/dashboard", req.url));
     }
+
     return NextResponse.next();
   }
 
-  const session = await verifySessionToken(
-    req.cookies.get(SESSION_COOKIE)?.value
-  );
+  const session = await verifySessionToken(req.cookies.get(SESSION_COOKIE)?.value);
 
   if (!session) {
     const loginUrl = new URL("/login", req.url);

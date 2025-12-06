@@ -17,12 +17,8 @@ export default async function ConfigPage() {
   return (
     <div className="space-y-4">
       <div>
-        <p className="text-sm uppercase tracking-wide text-slate-500">
-          Configurações
-        </p>
-        <h1 className="text-2xl font-semibold text-slate-900">
-          Dados do bolsista
-        </h1>
+        <p className="text-sm uppercase tracking-wide text-slate-500">Configurações</p>
+        <h1 className="text-2xl font-semibold text-slate-900">Dados do bolsista</h1>
         <p className="text-slate-600">
           Informe os dados fixos que aparecerão no cabeçalho do relatório.
         </p>

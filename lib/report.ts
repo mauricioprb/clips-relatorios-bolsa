@@ -1,6 +1,6 @@
 import { prisma } from "./prisma";
 import { getWorkingDays, getMonthRange } from "./dates";
-import { formatHoursValue, formatInterval } from "./formatters";
+import { formatInterval } from "./formatters";
 
 export type ReportDay = {
   date: Date;
@@ -42,32 +42,22 @@ export async function fetchReportData(year: number, month: number) {
     orderBy: [{ date: "asc" }, { startTime: "asc" }],
   });
 
-  const entriesByDay = entries.reduce<Record<string, typeof entries>>(
-    (acc, entry) => {
-      const key = toDayKey(entry.date);
-      acc[key] = acc[key] ? [...acc[key], entry] : [entry];
-      return acc;
-    },
-    {}
-  );
+  const entriesByDay = entries.reduce<Record<string, typeof entries>>((acc, entry) => {
+    const key = toDayKey(entry.date);
+    acc[key] = acc[key] ? [...acc[key], entry] : [entry];
+    return acc;
+  }, {});
 
   const days = getWorkingDays(year, month).map((day) => {
     const key = toDayKey(day);
     const dayEntries = entriesByDay[key] || [];
     const scheduleText =
       dayEntries.length > 0
-        ? dayEntries
-            .map((entry) => formatInterval(entry.startTime, entry.endTime))
-            .join(" | ")
+        ? dayEntries.map((entry) => formatInterval(entry.startTime, entry.endTime)).join(" | ")
         : "-";
     const activitiesText =
-      dayEntries.length > 0
-        ? dayEntries.map((entry) => entry.description).join("; ")
-        : "-";
-    const dailyHours = dayEntries.reduce(
-      (sum, entry) => sum + (entry.hours || 0),
-      0
-    );
+      dayEntries.length > 0 ? dayEntries.map((entry) => entry.description).join("; ") : "-";
+    const dailyHours = dayEntries.reduce((sum, entry) => sum + (entry.hours || 0), 0);
 
     return {
       date: day,
