@@ -354,7 +354,7 @@ export function WeeklySlotsManager({ initialSlots }: { initialSlots: WeeklySlot[
                   <FormItem>
                     <FormLabel>Descrição</FormLabel>
                     <FormControl>
-                      <Input placeholder="Ex: Atendimento Clínico" {...field} />
+                      <Input placeholder="Ex: Aula de Estrura da Matéria" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

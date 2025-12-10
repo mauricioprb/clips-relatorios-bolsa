@@ -284,7 +284,7 @@ export function DefaultActivitiesManager({
                   <FormItem>
                     <FormLabel>Descrição</FormLabel>
                     <FormControl>
-                      <Input placeholder="Ex: Reunião de equipe" {...field} />
+                      <Input placeholder="Ex: Pesquisa/Dissertação" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -339,8 +339,8 @@ export function DefaultActivitiesManager({
           <AlertDialogHeader>
             <AlertDialogTitle>Você tem certeza?</AlertDialogTitle>
             <AlertDialogDescription>
-              Esta ação não pode ser desfeita. Isso excluirá permanentemente a atividade "
-              {activityToDelete?.description}".
+              Esta ação não pode ser desfeita. Isso excluirá permanentemente a atividade &quot;
+              {activityToDelete?.description}&quot;.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

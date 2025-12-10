@@ -99,7 +99,7 @@ export function AddEditEventDialog({ children, startDate, startTime, event }: IP
       title: event?.title ?? "",
       startDate: initialDates.startDate,
       endDate: initialDates.endDate,
-      color: event?.color ?? "blue",
+      color: event?.color ?? "azul",
     });
   }, [event, initialDates, form]);
 
