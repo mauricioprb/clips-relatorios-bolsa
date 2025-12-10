@@ -8,7 +8,14 @@ import { Loader2, LogIn } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -47,27 +54,25 @@ export default function LoginPage() {
       <div className="absolute inset-0 -z-10 h-full w-full bg-background bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:14px_24px]">
         <div className="absolute left-0 right-0 top-0 -z-10 m-auto h-[310px] w-[310px] rounded-full bg-primary/20 opacity-20 blur-[100px]"></div>
       </div>
-      
+
       <Card className="w-full max-w-sm shadow-2xl border-border/50 bg-card/95 backdrop-blur-sm">
         <CardHeader className="space-y-1 text-center">
           <div className="flex justify-center mb-6">
-             <Image
+            <Image
               src="/logo_bagunca.svg"
               alt="Logo"
-              width={160}
-              height={160}
-              className="h-40 w-40"
+              width={400}
+              height={120}
+              className="h-auto w-auto max-h-16"
               priority
             />
           </div>
           <CardTitle className="text-2xl font-bold tracking-tight">Bem-vindo</CardTitle>
-          <CardDescription>
-            Acesse o sistema para gerenciar seus relatórios
-          </CardDescription>
+          <CardDescription>Acesse o sistema para gerenciar seus relatórios</CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="space-y-2">
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div className="grid gap-3">
               <Label htmlFor="username">Usuário</Label>
               <Input
                 id="username"
@@ -80,7 +85,7 @@ export default function LoginPage() {
                 className="bg-background/50"
               />
             </div>
-            <div className="space-y-2">
+            <div className="grid gap-3">
               <div className="flex items-center justify-between">
                 <Label htmlFor="password">Senha</Label>
               </div>
@@ -119,9 +124,7 @@ export default function LoginPage() {
           </form>
         </CardContent>
         <CardFooter className="flex flex-col gap-2 text-center text-xs text-muted-foreground">
-          <p>
-            Sistema de Gestão de Atividades
-          </p>
+          <p>Sistema de Gestão de Atividades</p>
         </CardFooter>
       </Card>
     </div>

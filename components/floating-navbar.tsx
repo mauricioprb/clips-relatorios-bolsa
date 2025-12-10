@@ -186,7 +186,7 @@ export function FloatingNavbar() {
                           "flex items-center gap-3 rounded-xl px-4 py-3 transition-colors",
                           active
                             ? "bg-accent text-accent-foreground"
-                            : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                            : "text-muted-foreground hover:bg-muted hover:text-foreground",
                         )}
                       >
                         <Icon className="h-5 w-5" />

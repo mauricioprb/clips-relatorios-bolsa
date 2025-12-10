@@ -209,7 +209,9 @@ export function MonthEntriesClient({
                               <p className="text-sm font-medium text-slate-900">
                                 {entry.description}
                               </p>
-                              <p className="text-xs text-slate-600">{formatHoursValue(entry.hours)}</p>
+                              <p className="text-xs text-slate-600">
+                                {formatHoursValue(entry.hours)}
+                              </p>
                             </div>
                             <div className="flex flex-col items-end gap-1 text-xs">
                               <button
@@ -233,7 +235,9 @@ export function MonthEntriesClient({
                       </button>
                     </div>
                   </td>
-                  <td className="p-2 font-semibold text-slate-800">{formatHoursValue(dailyHours)}</td>
+                  <td className="p-2 font-semibold text-slate-800">
+                    {formatHoursValue(dailyHours)}
+                  </td>
                   <td className="p-2 text-right">
                     {form.day === dayNumber && (
                       <form
