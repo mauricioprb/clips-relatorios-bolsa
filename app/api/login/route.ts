@@ -1,9 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import {
-  SESSION_COOKIE,
-  createSessionToken,
-  sessionCookieOptions,
-} from "@/lib/auth";
+import { SESSION_COOKIE, createSessionToken, sessionCookieOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { verifyPassword } from "@/lib/password";
 
@@ -11,10 +7,7 @@ export async function POST(req: NextRequest) {
   const { email, password } = await req.json();
 
   if (!email || !password) {
-    return NextResponse.json(
-      { message: "Email e senha são obrigatórios." },
-      { status: 400 }
-    );
+    return NextResponse.json({ message: "Email e senha são obrigatórios." }, { status: 400 });
   }
 
   const user = await prisma.user.findUnique({
@@ -32,8 +25,5 @@ export async function POST(req: NextRequest) {
     return res;
   }
 
-  return NextResponse.json(
-    { message: "Credenciais inválidas" },
-    { status: 401 }
-  );
+  return NextResponse.json({ message: "Credenciais inválidas" }, { status: 401 });
 }
