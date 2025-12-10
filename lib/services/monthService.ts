@@ -139,7 +139,6 @@ class MonthService {
           }
 
           const entry = await prisma.dayEntry.create({
-          const entry = await prisma.dayEntry.create({
             data: {
               date: day,
               description: slot.description,

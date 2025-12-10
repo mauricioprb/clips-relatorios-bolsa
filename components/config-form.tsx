@@ -43,7 +43,7 @@ export type ConfigData = z.infer<typeof formSchema>;
 export function ConfigForm({ initialData }: { initialData: ConfigData | null }) {
   const [isLoading, setIsLoading] = useState(false);
 
-  const form = useForm<ConfigData>({
+  const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: initialData || {
       bolsista: "",
@@ -145,7 +145,7 @@ export function ConfigForm({ initialData }: { initialData: ConfigData | null }) 
                   <FormItem>
                     <FormLabel>Carga Horária Semanal (horas)</FormLabel>
                     <FormControl>
-                      <Input type="number" {...field} />
+                      <Input type="number" {...field} value={field.value as string | number | undefined} />
                     </FormControl>
                     <FormDescription>
                       Total de horas que devem ser cumpridas por semana.

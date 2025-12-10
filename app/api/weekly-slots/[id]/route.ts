@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { weeklySlotService } from "@/lib/services/weeklySlotService";
 
 type Params = {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 };
 
 export async function PUT(req: NextRequest, { params }: Params) {

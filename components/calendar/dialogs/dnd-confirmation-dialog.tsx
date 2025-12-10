@@ -3,26 +3,21 @@ import { EventDropConfirmationDialog } from "./event-drop-confirmation-dialog";
 import { memo } from "react";
 
 const DndConfirmationDialog = memo(() => {
-	const {
-		showConfirmation,
-		pendingDropData,
-		handleConfirmDrop,
-		handleCancelDrop,
-	} = useDragDrop();
+  const { showConfirmation, pendingDropData, handleConfirmDrop, handleCancelDrop } = useDragDrop();
 
-	if (!showConfirmation || !pendingDropData) return null;
+  if (!showConfirmation || !pendingDropData) return null;
 
-	return (
-		<EventDropConfirmationDialog
-			open={showConfirmation}
-			onOpenChange={() => {}}
-			event={pendingDropData.event}
-			newStartDate={pendingDropData.newStartDate}
-			newEndDate={pendingDropData.newEndDate}
-			onConfirm={handleConfirmDrop}
-			onCancel={handleCancelDrop}
-		/>
-	);
+  return (
+    <EventDropConfirmationDialog
+      open={showConfirmation}
+      onOpenChange={() => {}}
+      event={pendingDropData.event}
+      newStartDate={pendingDropData.newStartDate}
+      newEndDate={pendingDropData.newEndDate}
+      onConfirm={handleConfirmDrop}
+      onCancel={handleCancelDrop}
+    />
+  );
 });
 
 DndConfirmationDialog.displayName = "DndConfirmationDialog";
