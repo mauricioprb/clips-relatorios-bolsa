@@ -16,21 +16,5 @@ export default async function GradeSemanalPage() {
     description: slot.description,
   }));
 
-  return (
-    <div className="space-y-4">
-      <div>
-        <p className="text-sm uppercase tracking-wide text-slate-500">
-          Grade semanal
-        </p>
-        <h1 className="text-2xl font-semibold text-slate-900">
-          Horários recorrentes
-        </h1>
-        <p className="text-slate-600">
-          Cadastre aulas, laboratório e outros compromissos fixos por dia da
-          semana.
-        </p>
-      </div>
-      <WeeklySlotsManager initialSlots={serialized} />
-    </div>
-  );
+  return <WeeklySlotsManager initialSlots={serialized} />;
 }

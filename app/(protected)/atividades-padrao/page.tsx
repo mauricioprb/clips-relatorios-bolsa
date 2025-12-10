@@ -1,6 +1,7 @@
 export const dynamic = "force-dynamic";
 
 import { DefaultActivitiesManager } from "@/components/default-activities-manager";
+import { PageHeader } from "@/components/page-header";
 import { prisma } from "@/lib/prisma";
 
 export default async function AtividadesPadraoPage() {
@@ -16,13 +17,11 @@ export default async function AtividadesPadraoPage() {
 
   return (
     <div className="space-y-4">
-      <div>
-        <p className="text-sm uppercase tracking-wide text-slate-500">Atividades padrão</p>
-        <h1 className="text-2xl font-semibold text-slate-900">Preenchimento automático</h1>
-        <p className="text-slate-600">
-          Defina atividades usadas para completar a carga horária semanal ao preencher dias vazios.
-        </p>
-      </div>
+      <PageHeader
+        kicker="Atividades padrão"
+        title="Preenchimento automático"
+        description="Defina atividades usadas para completar a carga horária semanal ao preencher dias vazios."
+      />
       <DefaultActivitiesManager initialActivities={serialized} />
     </div>
   );

@@ -5,23 +5,10 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { toast } from "sonner";
-import {
-  Loader2,
-  MoreHorizontal,
-  Plus,
-  Pencil,
-  Trash2,
-  Search,
-} from "lucide-react";
+import { Loader2, MoreHorizontal, Plus, Pencil, Trash2, Search } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Dialog,
   DialogContent,
@@ -97,17 +84,11 @@ export function DefaultActivitiesManager({
 }: {
   initialActivities: DefaultActivity[];
 }) {
-  const [activities, setActivities] = useState<DefaultActivity[]>(
-    initialActivities
-  );
+  const [activities, setActivities] = useState<DefaultActivity[]>(initialActivities);
   const [search, setSearch] = useState("");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [editingActivity, setEditingActivity] = useState<DefaultActivity | null>(
-    null
-  );
-  const [activityToDelete, setActivityToDelete] = useState<DefaultActivity | null>(
-    null
-  );
+  const [editingActivity, setEditingActivity] = useState<DefaultActivity | null>(null);
+  const [activityToDelete, setActivityToDelete] = useState<DefaultActivity | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
   const form = useForm<FormValues>({
@@ -119,7 +100,7 @@ export function DefaultActivitiesManager({
   });
 
   const filteredActivities = activities.filter((activity) =>
-    activity.description.toLowerCase().includes(search.toLowerCase())
+    activity.description.toLowerCase().includes(search.toLowerCase()),
   );
 
   const onSubmit = async (values: FormValues) => {
@@ -142,19 +123,13 @@ export function DefaultActivitiesManager({
 
       setActivities((prev) => {
         if (editingActivity) {
-          return prev.map((item) =>
-            item.id === savedActivity.id ? savedActivity : item
-          );
+          return prev.map((item) => (item.id === savedActivity.id ? savedActivity : item));
         }
-        return [...prev, savedActivity].sort((a, b) =>
-          a.description.localeCompare(b.description)
-        );
+        return [...prev, savedActivity].sort((a, b) => a.description.localeCompare(b.description));
       });
 
       toast.success(
-        editingActivity
-          ? "Atividade atualizada com sucesso."
-          : "Atividade criada com sucesso."
+        editingActivity ? "Atividade atualizada com sucesso." : "Atividade criada com sucesso.",
       );
       setIsDialogOpen(false);
       form.reset();
@@ -177,9 +152,7 @@ export function DefaultActivitiesManager({
 
       if (!res.ok) throw new Error("Erro ao excluir");
 
-      setActivities((prev) =>
-        prev.filter((item) => item.id !== activityToDelete.id)
-      );
+      setActivities((prev) => prev.filter((item) => item.id !== activityToDelete.id));
       toast.success("Atividade excluída com sucesso.");
       setActivityToDelete(null);
     } catch (error) {
@@ -211,9 +184,7 @@ export function DefaultActivitiesManager({
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
           <div className="space-y-1">
             <CardTitle>Gerenciar Atividades</CardTitle>
-            <CardDescription>
-              {activities.length} atividade(s) cadastrada(s)
-            </CardDescription>
+            <CardDescription>{activities.length} atividade(s) cadastrada(s)</CardDescription>
           </div>
           <Button onClick={openNewDialog}>
             <Plus className="mr-2 h-4 w-4" />
@@ -245,25 +216,20 @@ export function DefaultActivitiesManager({
               <TableBody>
                 {filteredActivities.length === 0 ? (
                   <TableRow>
-                    <TableCell
-                      colSpan={3}
-                      className="h-24 text-center text-muted-foreground"
-                    >
+                    <TableCell colSpan={3} className="h-24 text-center text-muted-foreground">
                       Nenhuma atividade encontrada.
                     </TableCell>
                   </TableRow>
                 ) : (
                   filteredActivities.map((activity) => (
                     <TableRow key={activity.id}>
-                      <TableCell className="font-medium">
-                        {activity.description}
-                      </TableCell>
+                      <TableCell className="font-medium">{activity.description}</TableCell>
                       <TableCell>
                         <div className="flex items-center gap-2">
                           <div
                             className={cn(
                               "h-4 w-4 rounded-full",
-                              BG_COLORS[activity.color as keyof typeof BG_COLORS]
+                              BG_COLORS[activity.color as keyof typeof BG_COLORS],
                             )}
                           />
                           <span className="capitalize">
@@ -274,18 +240,13 @@ export function DefaultActivitiesManager({
                       <TableCell>
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
-                            <Button
-                              variant="ghost"
-                              className="h-8 w-8 p-0"
-                            >
+                            <Button variant="ghost" className="h-8 w-8 p-0">
                               <span className="sr-only">Abrir menu</span>
                               <MoreHorizontal className="h-4 w-4" />
                             </Button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end">
-                            <DropdownMenuItem
-                              onClick={() => openEditDialog(activity)}
-                            >
+                            <DropdownMenuItem onClick={() => openEditDialog(activity)}>
                               <Pencil className="mr-2 h-4 w-4" />
                               Editar
                             </DropdownMenuItem>
@@ -311,12 +272,8 @@ export function DefaultActivitiesManager({
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>
-              {editingActivity ? "Editar Atividade" : "Nova Atividade"}
-            </DialogTitle>
-            <DialogDescription>
-              Preencha os dados da atividade padrão abaixo.
-            </DialogDescription>
+            <DialogTitle>{editingActivity ? "Editar Atividade" : "Nova Atividade"}</DialogTitle>
+            <DialogDescription>Preencha os dados da atividade padrão abaixo.</DialogDescription>
           </DialogHeader>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -327,10 +284,7 @@ export function DefaultActivitiesManager({
                   <FormItem>
                     <FormLabel>Descrição</FormLabel>
                     <FormControl>
-                      <Input
-                        placeholder="Ex: Reunião de equipe"
-                        {...field}
-                      />
+                      <Input placeholder="Ex: Reunião de equipe" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -342,10 +296,7 @@ export function DefaultActivitiesManager({
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Prioridade</FormLabel>
-                    <Select
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                    >
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
                       <FormControl>
                         <SelectTrigger>
                           <SelectValue placeholder="Selecione uma prioridade" />
@@ -355,15 +306,8 @@ export function DefaultActivitiesManager({
                         {PRIORITY_COLORS.map((color) => (
                           <SelectItem key={color} value={color}>
                             <div className="flex items-center gap-2">
-                              <div
-                                className={cn(
-                                  "h-3 w-3 rounded-full",
-                                  BG_COLORS[color]
-                                )}
-                              />
-                              <span className="capitalize">
-                                {PRIORITY_LABELS[color] || color}
-                              </span>
+                              <div className={cn("h-3 w-3 rounded-full", BG_COLORS[color])} />
+                              <span className="capitalize">{PRIORITY_LABELS[color] || color}</span>
                             </div>
                           </SelectItem>
                         ))}
@@ -374,17 +318,11 @@ export function DefaultActivitiesManager({
                 )}
               />
               <DialogFooter>
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => setIsDialogOpen(false)}
-                >
+                <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)}>
                   Cancelar
                 </Button>
                 <Button type="submit" disabled={isLoading}>
-                  {isLoading && (
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  )}
+                  {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                   Salvar
                 </Button>
               </DialogFooter>
@@ -401,21 +339,14 @@ export function DefaultActivitiesManager({
           <AlertDialogHeader>
             <AlertDialogTitle>Você tem certeza?</AlertDialogTitle>
             <AlertDialogDescription>
-              Esta ação não pode ser desfeita. Isso excluirá permanentemente a
-              atividade "{activityToDelete?.description}".
+              Esta ação não pode ser desfeita. Isso excluirá permanentemente a atividade "
+              {activityToDelete?.description}".
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancelar</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={handleDelete}
-              className="bg-red-600 hover:bg-red-700"
-            >
-              {isLoading ? (
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              ) : (
-                "Excluir"
-              )}
+            <AlertDialogAction onClick={handleDelete} className="bg-red-600 hover:bg-red-700">
+              {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : "Excluir"}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

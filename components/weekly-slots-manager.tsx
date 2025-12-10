@@ -1,6 +1,57 @@
 "use client";
 
 import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+import { Plus, Pencil, Trash2, Clock } from "lucide-react";
+import { toast } from "sonner";
+
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { Badge } from "@/components/ui/badge";
+import { PageHeader } from "@/components/page-header";
+import { cn } from "@/lib/utils";
 
 export type WeeklySlot = {
   id: string;
@@ -20,211 +71,326 @@ const weekDays = [
   "Sábado",
 ];
 
-type FormState = {
-  id?: string;
-  weekday: number;
-  startTime: string;
-  endTime: string;
-  description: string;
-};
-
-const emptyForm: FormState = {
-  weekday: 1,
-  startTime: "14:00",
-  endTime: "18:00",
-  description: "",
-};
+const formSchema = z.object({
+  weekday: z.string(),
+  startTime: z.string().min(1, "Horário inicial é obrigatório"),
+  endTime: z.string().min(1, "Horário final é obrigatório"),
+  description: z.string().min(1, "Descrição é obrigatória"),
+});
 
 export function WeeklySlotsManager({
   initialSlots,
 }: {
   initialSlots: WeeklySlot[];
 }) {
-  const [slots, setSlots] = useState(initialSlots);
-  const [form, setForm] = useState<FormState>(emptyForm);
-  const [saving, setSaving] = useState(false);
+  const [slots, setSlots] = useState<WeeklySlot[]>(initialSlots);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [editingSlot, setEditingSlot] = useState<WeeklySlot | null>(null);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setSaving(true);
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      weekday: "1",
+      startTime: "08:00",
+      endTime: "12:00",
+      description: "",
+    },
+  });
 
-    const payload = {
-      weekday: Number(form.weekday),
-      startTime: form.startTime,
-      endTime: form.endTime,
-      description: form.description,
-    };
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    try {
+      const payload = {
+        weekday: parseInt(values.weekday),
+        startTime: values.startTime,
+        endTime: values.endTime,
+        description: values.description,
+      };
 
-    const res = await fetch(
-      form.id ? `/api/weekly-slots/${form.id}` : "/api/weekly-slots",
-      {
-        method: form.id ? "PUT" : "POST",
+      const url = editingSlot
+        ? `/api/weekly-slots/${editingSlot.id}`
+        : "/api/weekly-slots";
+      const method = editingSlot ? "PUT" : "POST";
+
+      const res = await fetch(url, {
+        method,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
-      }
-    );
-
-    if (res.ok) {
-      const saved: WeeklySlot = await res.json();
-      setSlots((prev) => {
-        if (form.id) {
-          return prev.map((slot) => (slot.id === saved.id ? saved : slot));
-        }
-        return [...prev, saved].sort(
-          (a, b) => a.weekday - b.weekday || a.startTime.localeCompare(b.startTime)
-        );
       });
-      setForm(emptyForm);
-    }
 
-    setSaving(false);
+      if (!res.ok) throw new Error("Falha ao salvar");
+
+      const saved: WeeklySlot = await res.json();
+
+      setSlots((prev) => {
+        if (editingSlot) {
+          return prev.map((s) => (s.id === saved.id ? saved : s));
+        }
+        return [...prev, saved];
+      });
+
+      toast.success(
+        editingSlot ? "Horário atualizado!" : "Horário criado com sucesso!"
+      );
+      setIsDialogOpen(false);
+      setEditingSlot(null);
+      form.reset();
+    } catch (error) {
+      toast.error("Erro ao salvar horário");
+    }
   };
 
-  const startEdit = (slot: WeeklySlot) => {
-    setForm({
-      id: slot.id,
-      weekday: slot.weekday,
+  const handleDelete = async (id: string) => {
+    try {
+      const res = await fetch(`/api/weekly-slots/${id}`, { method: "DELETE" });
+      if (!res.ok) throw new Error("Falha ao excluir");
+
+      setSlots((prev) => prev.filter((s) => s.id !== id));
+      toast.success("Horário removido");
+    } catch (error) {
+      toast.error("Erro ao remover horário");
+    }
+  };
+
+  const openNewDialog = (weekday?: number) => {
+    setEditingSlot(null);
+    form.reset({
+      weekday: weekday !== undefined ? weekday.toString() : "1",
+      startTime: "08:00",
+      endTime: "12:00",
+      description: "",
+    });
+    setIsDialogOpen(true);
+  };
+
+  const openEditDialog = (slot: WeeklySlot) => {
+    setEditingSlot(slot);
+    form.reset({
+      weekday: slot.weekday.toString(),
       startTime: slot.startTime,
       endTime: slot.endTime,
       description: slot.description,
     });
+    setIsDialogOpen(true);
   };
 
-  const deleteSlot = async (id: string) => {
-    if (!confirm("Deseja excluir este horário?")) return;
-    await fetch(`/api/weekly-slots/${id}`, { method: "DELETE" });
-    setSlots((prev) => prev.filter((slot) => slot.id !== id));
-  };
+  // Group slots by weekday
+  const slotsByDay = weekDays.map((day, index) => ({
+    dayName: day,
+    dayIndex: index,
+    slots: slots
+      .filter((s) => s.weekday === index)
+      .sort((a, b) => a.startTime.localeCompare(b.startTime)),
+  }));
 
   return (
-    <div className="grid gap-4 lg:grid-cols-[2fr_1fr]">
-      <div className="card">
-        <div className="mb-3 flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-slate-900">
-            Horários cadastrados
-          </h2>
-          <span className="text-sm text-slate-600">
-            {slots.length} registro(s)
-          </span>
-        </div>
-        <div className="overflow-x-auto">
-          <table className="min-w-full text-sm">
-            <thead>
-              <tr className="border-b bg-slate-50 text-left">
-                <th className="p-2">Dia</th>
-                <th className="p-2">Horário</th>
-                <th className="p-2">Descrição</th>
-                <th className="p-2 text-right">Ações</th>
-              </tr>
-            </thead>
-            <tbody>
-              {slots.map((slot) => (
-                <tr key={slot.id} className="border-b">
-                  <td className="p-2">{weekDays[slot.weekday]}</td>
-                  <td className="p-2">
-                    {slot.startTime} - {slot.endTime}
-                  </td>
-                  <td className="p-2">{slot.description}</td>
-                  <td className="p-2 text-right">
-                    <button
-                      className="btn-secondary mr-2"
-                      onClick={() => startEdit(slot)}
-                    >
-                      Editar
-                    </button>
-                    <button
-                      className="text-red-600 hover:underline"
-                      onClick={() => deleteSlot(slot.id)}
-                    >
-                      Excluir
-                    </button>
-                  </td>
-                </tr>
-              ))}
-              {slots.length === 0 && (
-                <tr>
-                  <td colSpan={4} className="p-3 text-center text-slate-500">
-                    Nenhum horário cadastrado ainda.
-                  </td>
-                </tr>
+    <div className="space-y-6">
+      <PageHeader
+        title="Grade Semanal"
+        description="Gerencie seus horários recorrentes de atendimento."
+        actions={
+          <Button onClick={() => openNewDialog()}>
+            <Plus className="mr-2 h-4 w-4" />
+            Novo Horário
+          </Button>
+        }
+      />
+
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        {slotsByDay.map(({ dayName, dayIndex, slots }) => (
+          <Card
+            key={dayIndex}
+            className={cn(
+              "group relative flex flex-col",
+              slots.length === 0 && "border-dashed bg-muted/20"
+            )}
+          >
+            <CardHeader className="pb-3">
+              <CardTitle className="text-base font-medium flex items-center justify-between">
+                {dayName}
+                <div className="flex items-center gap-2">
+                  <Badge
+                    variant={slots.length > 0 ? "default" : "secondary"}
+                    className="text-xs font-normal"
+                  >
+                    {slots.length}
+                  </Badge>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-6 w-6 opacity-0 transition-opacity group-hover:opacity-100"
+                    onClick={() => openNewDialog(dayIndex)}
+                  >
+                    <Plus className="h-3.5 w-3.5" />
+                  </Button>
+                </div>
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="flex-1 space-y-3">
+              {slots.length === 0 ? (
+                <div className="flex h-full min-h-[120px] w-full items-center justify-center">
+                  <Button
+                    variant="ghost"
+                    className="border opacity-0 transition-opacity duration-200 group-hover:opacity-100"
+                    onClick={() => openNewDialog(dayIndex)}
+                  >
+                    <Plus className="mr-2 h-4 w-4" />
+                    Adicionar
+                  </Button>
+                </div>
+              ) : (
+                slots.map((slot) => (
+                  <div
+                    key={slot.id}
+                    className="group flex flex-col gap-2 rounded-lg border bg-card p-3 text-sm shadow-sm transition-all hover:shadow-md"
+                  >
+                    <div className="flex items-center justify-between font-medium">
+                      <div className="flex items-center gap-2 text-primary">
+                        <Clock className="h-3.5 w-3.5" />
+                        <span>
+                          {slot.startTime} - {slot.endTime}
+                        </span>
+                      </div>
+                    </div>
+                    <div className="text-muted-foreground line-clamp-2">
+                      {slot.description}
+                    </div>
+                    <div className="flex items-center justify-end gap-2 pt-2 opacity-0 transition-opacity group-hover:opacity-100">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-7 w-7"
+                        onClick={() => openEditDialog(slot)}
+                      >
+                        <Pencil className="h-3.5 w-3.5" />
+                      </Button>
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-7 w-7 text-destructive hover:text-destructive"
+                          >
+                            <Trash2 className="h-3.5 w-3.5" />
+                          </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>Excluir horário?</AlertDialogTitle>
+                            <AlertDialogDescription>
+                              Esta ação não pode ser desfeita.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                            <AlertDialogAction
+                              onClick={() => handleDelete(slot.id)}
+                              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                            >
+                              Excluir
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
+                    </div>
+                  </div>
+                ))
               )}
-            </tbody>
-          </table>
-        </div>
+            </CardContent>
+          </Card>
+        ))}
       </div>
 
-      <form onSubmit={handleSubmit} className="card space-y-3">
-        <h2 className="text-lg font-semibold text-slate-900">
-          {form.id ? "Editar horário" : "Novo horário"}
-        </h2>
-        <div>
-          <label className="mb-1 block text-sm font-medium text-slate-700">
-            Dia da semana
-          </label>
-          <select
-            className="input"
-            value={form.weekday}
-            onChange={(e) => setForm({ ...form, weekday: Number(e.target.value) })}
-          >
-            {weekDays.map((label, index) => (
-              <option key={label} value={index}>
-                {label}
-              </option>
-            ))}
-          </select>
-        </div>
-        <div className="grid gap-3 md:grid-cols-2">
-          <div>
-            <label className="mb-1 block text-sm font-medium text-slate-700">
-              Horário inicial
-            </label>
-            <input
-              className="input"
-              type="time"
-              value={form.startTime}
-              onChange={(e) => setForm({ ...form, startTime: e.target.value })}
-              required
-            />
-          </div>
-          <div>
-            <label className="mb-1 block text-sm font-medium text-slate-700">
-              Horário final
-            </label>
-            <input
-              className="input"
-              type="time"
-              value={form.endTime}
-              onChange={(e) => setForm({ ...form, endTime: e.target.value })}
-              required
-            />
-          </div>
-        </div>
-        <div>
-          <label className="mb-1 block text-sm font-medium text-slate-700">
-            Descrição
-          </label>
-          <input
-            className="input"
-            value={form.description}
-            onChange={(e) => setForm({ ...form, description: e.target.value })}
-            required
-          />
-        </div>
-        <div className="flex items-center gap-3">
-          <button type="submit" className="btn-primary" disabled={saving}>
-            {saving ? "Salvando..." : form.id ? "Atualizar" : "Criar"}
-          </button>
-          {form.id && (
-            <button
-              type="button"
-              className="btn-secondary"
-              onClick={() => setForm(emptyForm)}
-            >
-              Cancelar
-            </button>
-          )}
-        </div>
-      </form>
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>
+              {editingSlot ? "Editar Horário" : "Novo Horário"}
+            </DialogTitle>
+            <DialogDescription>
+              Configure o dia e hora do atendimento recorrente.
+            </DialogDescription>
+          </DialogHeader>
+
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+              <FormField
+                control={form.control}
+                name="weekday"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Dia da Semana</FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Selecione o dia" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {weekDays.map((day, index) => (
+                          <SelectItem key={index} value={index.toString()}>
+                            {day}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <div className="grid grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="startTime"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Início</FormLabel>
+                      <FormControl>
+                        <Input type="time" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="endTime"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Fim</FormLabel>
+                      <FormControl>
+                        <Input type="time" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <FormField
+                control={form.control}
+                name="description"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Descrição</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Ex: Atendimento Clínico" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <DialogFooter>
+                <Button type="submit">Salvar</Button>
+              </DialogFooter>
+            </form>
+          </Form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

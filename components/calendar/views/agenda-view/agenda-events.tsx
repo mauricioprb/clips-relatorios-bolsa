@@ -88,9 +88,6 @@ export const AgendaEvents: FC = () => {
                         >
                           {event.title}
                         </p>
-                        <p className="text-muted-foreground text-sm line-clamp-1 text-ellipsis md:text-clip w-1/3">
-                          {event.description}
-                        </p>
                       </div>
                     </div>
                     <div className="w-40 flex justify-center items-center gap-1">
@@ -102,7 +99,9 @@ export const AgendaEvents: FC = () => {
                         </>
                       ) : (
                         <>
-                          <p className="text-sm">{format(parseISO(event.startDate), "dd/MM/yyyy")}</p>
+                          <p className="text-sm">
+                            {format(parseISO(event.startDate), "dd/MM/yyyy")}
+                          </p>
                           <span className="text-sm">às</span>
                           <p className="text-sm">{formatTime(event.startDate, use24HourFormat)}</p>
                         </>

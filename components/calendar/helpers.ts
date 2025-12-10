@@ -1,28 +1,21 @@
 import {
-  addDays,
   addMonths,
-  addWeeks,
   addYears,
   differenceInDays,
   differenceInMinutes,
   eachDayOfInterval,
   endOfMonth,
-  endOfWeek,
   endOfYear,
   format,
   isSameDay,
   isSameMonth,
-  isSameWeek,
   isSameYear,
   isValid,
   parseISO,
   startOfDay,
   startOfMonth,
-  startOfWeek,
   startOfYear,
-  subDays,
   subMonths,
-  subWeeks,
   subYears,
 } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -31,7 +24,6 @@ import type { ICalendarCell, IEvent } from "@/components/calendar/interfaces";
 import type { TCalendarView, TEventColor } from "@/components/calendar/types";
 
 const FORMAT_STRING = "dd 'de' MMMM 'de' yyyy";
-const WEEK_STARTS_ON = 1; // Monday, Brazilian convention
 
 export function rangeText(view: TCalendarView, date: Date): string {
   let start: Date;
@@ -118,11 +110,11 @@ export function getEventBlockStyle(
   groupSize: number,
 ) {
   const startDate = parseISO(event.startDate);
-  const dayStart = startOfDay(day); // Use startOfDay instead of manual reset
+  const dayStart = startOfDay(day);
   const eventStart = startDate < dayStart ? dayStart : startDate;
   const startMinutes = differenceInMinutes(eventStart, dayStart);
 
-  const top = (startMinutes / 1440) * 100; // 1440 minutes in a day
+  const top = (startMinutes / 1440) * 100;
   const width = 100 / groupSize;
   const left = groupIndex * width;
 
@@ -133,7 +125,7 @@ export function getCalendarCells(selectedDate: Date): ICalendarCell[] {
   const year = selectedDate.getFullYear();
   const month = selectedDate.getMonth();
 
-  const daysInMonth = endOfMonth(selectedDate).getDate(); // Faster than new Date(year, month + 1, 0)
+  const daysInMonth = endOfMonth(selectedDate).getDate();
   const firstDayOfMonth = startOfMonth(selectedDate).getDay();
   const daysInPrevMonth = endOfMonth(new Date(year, month - 1)).getDate();
   const totalDays = firstDayOfMonth + daysInMonth;
@@ -364,8 +356,6 @@ export const useGetEventsByMode = (events: IEvent[]) => {
   const { view, selectedDate } = useCalendar();
 
   switch (view) {
-    case "day":
-      return getEventsForDay(events, selectedDate);
     case "agenda":
     case "month":
       return getEventsForMonth(events, selectedDate);

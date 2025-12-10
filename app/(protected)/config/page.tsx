@@ -1,6 +1,7 @@
 export const dynamic = "force-dynamic";
 
 import { ConfigForm } from "@/components/config-form";
+import { PageHeader } from "@/components/page-header";
 import { prisma } from "@/lib/prisma";
 
 export default async function ConfigPage() {
@@ -17,14 +18,11 @@ export default async function ConfigPage() {
 
   return (
     <div className="space-y-4">
-      <div>
-        <p className="text-sm uppercase tracking-wide text-slate-500">Configurações</p>
-        <h1 className="text-2xl font-semibold text-slate-900">Dados do bolsista</h1>
-        <p className="text-slate-600">
-          Informe os dados fixos (incluindo a carga horária semanal da bolsa) que aparecerão no
-          cabeçalho do relatório.
-        </p>
-      </div>
+      <PageHeader
+        kicker="Configurações"
+        title="Dados do bolsista"
+        description="Informe os dados fixos (incluindo a carga horária semanal da bolsa) que aparecerão no cabeçalho do relatório."
+      />
       <ConfigForm initialData={serialized} />
     </div>
   );
