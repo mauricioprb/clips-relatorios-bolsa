@@ -31,7 +31,7 @@ class DayEntryService {
       typeof input.hours === "number" && !Number.isNaN(input.hours)
         ? input.hours
         : calculateHours(input.startTime, input.endTime),
-      0
+      0,
     );
     return prisma.dayEntry.create({
       data: {
@@ -51,7 +51,7 @@ class DayEntryService {
       typeof input.hours === "number" && !Number.isNaN(input.hours)
         ? input.hours
         : calculateHours(input.startTime, input.endTime),
-      0
+      0,
     );
     return prisma.dayEntry.update({
       where: { id },

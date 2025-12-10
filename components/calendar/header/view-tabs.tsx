@@ -4,14 +4,7 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 import { cn } from "@/lib/utils";
 import { useCalendar } from "../contexts/calendar-context";
-import {
-  CalendarRange,
-  List,
-  Columns,
-  Grid3X3,
-  Grid2X2,
-  type LucideIcon,
-} from "lucide-react";
+import { CalendarRange, Grid3X3, Grid2X2, type LucideIcon } from "lucide-react";
 import { TCalendarView } from "../types";
 import { memo } from "react";
 
@@ -58,7 +51,7 @@ function Views() {
               layout
               className={cn(
                 "flex h-8 items-center justify-center overflow-hidden rounded-md",
-                isActive ? "flex-1" : "flex-none"
+                isActive ? "flex-1" : "flex-none",
               )}
               onClick={() => setView(value as TCalendarView)}
               initial={false}
@@ -79,10 +72,7 @@ function Views() {
                   transition={{ duration: 0.25, ease: "easeOut" }}
                 >
                   <Icon
-                    className={cn(
-                      "transition-all duration-200",
-                      isActive ? "h-4 w-4" : "h-4 w-4"
-                    )}
+                    className={cn("transition-all duration-200", isActive ? "h-4 w-4" : "h-4 w-4")}
                   />
 
                   <AnimatePresence initial={false}>

@@ -9,10 +9,7 @@ export async function GET() {
 export async function POST(req: NextRequest) {
   const { description, color } = await req.json();
   if (!description || !color) {
-    return NextResponse.json(
-      { message: "Informe descrição e cor." },
-      { status: 400 }
-    );
+    return NextResponse.json({ message: "Informe descrição e cor." }, { status: 400 });
   }
 
   const activity = await defaultActivityService.create({

@@ -17,19 +17,15 @@ export default async function MesPage({ searchParams }: Props) {
   return (
     <div className="space-y-4">
       <div>
-        <p className="text-sm uppercase tracking-wide text-slate-500">Mês</p>
-        <h1 className="text-2xl font-semibold text-slate-900">
-          Atividades do mês
-        </h1>
+        <h1 className="text-2xl font-semibold text-slate-900">Atividades do mês</h1>
         <p className="text-slate-600">
-          Consulte, edite e preencha automaticamente os dias de{" "}
-          {month.toString().padStart(2, "0")}/{year}.
+          Consulte, edite e preencha automaticamente os dias de {month.toString().padStart(2, "0")}/
+          {year}.
         </p>
       </div>
       <Suspense fallback={<CalendarSkeleton />}>
         <Calendar year={year} month={month} />
       </Suspense>
-      
     </div>
   );
 }

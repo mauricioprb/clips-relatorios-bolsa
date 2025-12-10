@@ -18,15 +18,12 @@ export default async function Dashboard() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <p className="text-sm uppercase tracking-wide text-slate-500">
-            Ciclaro
-          </p>
+          <p className="text-sm uppercase tracking-wide text-slate-500">Ciclaro</p>
           <h1 className="text-2xl font-semibold text-slate-900">
             Olá, {config?.bolsista || "bolsista"}!
           </h1>
           <p className="text-slate-600">
-            Gerencie sua configuração e atividades para gerar o relatório
-            mensal.
+            Gerencie sua configuração e atividades para gerar o relatório mensal.
           </p>
         </div>
         <Link href="/mes" className="btn-primary">
@@ -39,9 +36,7 @@ export default async function Dashboard() {
           title="Dados do bolsista"
           value={config ? "Configurado" : "Pendente"}
           description={
-            config
-              ? `${config.bolsista} · ${config.orientador}`
-              : "Cadastre em Configurações"
+            config ? `${config.bolsista} · ${config.orientador}` : "Cadastre em Configurações"
           }
           href="/config"
         />
@@ -66,9 +61,7 @@ export default async function Dashboard() {
       </div>
 
       <div className="card">
-        <h2 className="text-lg font-semibold text-slate-900">
-          Próximos passos
-        </h2>
+        <h2 className="text-lg font-semibold text-slate-900">Próximos passos</h2>
         <ol className="mt-3 list-decimal space-y-1 pl-4 text-slate-700">
           <li>Cadastre seus dados em Configurações.</li>
           <li>Defina a grade semanal e atividades padrão.</li>
@@ -76,9 +69,9 @@ export default async function Dashboard() {
           <li>Gere o PDF do relatório e envie para o orientador.</li>
         </ol>
       </div>
-        <Suspense fallback={<CalendarSkeleton />}>
-      <Calendar />
-    </Suspense>
+      <Suspense fallback={<CalendarSkeleton />}>
+        <Calendar />
+      </Suspense>
     </div>
   );
 }

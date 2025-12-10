@@ -16,13 +16,10 @@ import {
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Separator } from "@/components/ui/separator";
+
+import { ModeToggle } from "@/components/mode-toggle";
 
 const links = [
   { href: "/mes", label: "Mês", icon: Calendar },
@@ -46,8 +43,7 @@ export function FloatingNavbar() {
     }
   };
 
-  const isActive = (href: string) =>
-    pathname === href || pathname.startsWith(`${href}/`);
+  const isActive = (href: string) => pathname === href || pathname.startsWith(`${href}/`);
 
   return (
     <div className="fixed top-4 left-1/2 z-50 -translate-x-1/2">
@@ -63,7 +59,7 @@ export function FloatingNavbar() {
                   "relative flex items-center gap-2 rounded-full px-4 py-2 transition-all hover:bg-slate-100 dark:hover:bg-slate-800",
                   active
                     ? "text-blue-600 dark:text-blue-400"
-                    : "text-slate-600 dark:text-slate-400"
+                    : "text-slate-600 dark:text-slate-400",
                 )}
               >
                 {active && (
@@ -84,6 +80,8 @@ export function FloatingNavbar() {
         })}
 
         <Separator orientation="vertical" className="mx-1 h-8" />
+
+        <ModeToggle />
 
         <TooltipProvider delayDuration={0}>
           <Tooltip>

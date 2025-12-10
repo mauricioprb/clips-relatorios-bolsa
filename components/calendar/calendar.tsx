@@ -4,7 +4,7 @@ import { CalendarProvider } from "@/components/calendar/contexts/calendar-contex
 import { DndProvider } from "@/components/calendar/contexts/dnd-context";
 import { CalendarHeader } from "@/components/calendar/header/calendar-header";
 import { getEvents, getUsers } from "@/components/calendar/requests";
-import { CalendarActions } from "@/components/calendar/calendar-actions";
+
 
 async function getCalendarData(year: number, month: number) {
 	const users = await getUsers();
@@ -36,9 +36,7 @@ export async function Calendar({ year, month }: Props) {
 			<DndProvider showConfirmation={false}>
 				<div className="w-full border rounded-xl">
 					<CalendarHeader />
-					<div className="border-b px-4 py-3">
-						<CalendarActions />
-					</div>
+
 					<CalendarBody />
 				</div>
 			</DndProvider>

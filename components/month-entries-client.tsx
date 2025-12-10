@@ -134,10 +134,7 @@ export function MonthEntriesClient({
 
   const generatePdf = async () => {
     setLoadingPdf(true);
-    const res = await fetch(
-      `/api/month/report-pdf?ano=${year}&mes=${month}`,
-      { method: "GET" }
-    );
+    const res = await fetch(`/api/month/report-pdf?ano=${year}&mes=${month}`, { method: "GET" });
     if (res.ok) {
       const blob = await res.blob();
       const url = URL.createObjectURL(blob);
@@ -159,25 +156,11 @@ export function MonthEntriesClient({
   return (
     <div className="space-y-4">
       <div className="flex flex-wrap items-center gap-2">
-        <MonthSelector
-          year={year}
-          month={month}
-          onChange={handleChangeMonth}
-        />
-        <button
-          onClick={fillBlanks}
-          className="btn-secondary"
-          disabled={loadingFill}
-        >
-          {loadingFill
-            ? "Preenchendo..."
-            : "Aplicar grade semanal e completar dias em branco"}
+        <MonthSelector year={year} month={month} onChange={handleChangeMonth} />
+        <button onClick={fillBlanks} className="btn-secondary" disabled={loadingFill}>
+          {loadingFill ? "Preenchendo..." : "Completar dias"}
         </button>
-        <button
-          onClick={generatePdf}
-          className="btn-primary"
-          disabled={loadingPdf}
-        >
+        <button onClick={generatePdf} className="btn-primary" disabled={loadingPdf}>
           {loadingPdf ? "Gerando PDF..." : "Gerar PDF do relatório"}
         </button>
         <span className="ml-auto text-sm font-semibold text-slate-800">
@@ -200,10 +183,7 @@ export function MonthEntriesClient({
               const key = dayKey(dayDate);
               const dayNumber = dayDate.getUTCDate();
               const dayEntries = entriesByDay[key] || [];
-              const dailyHours = dayEntries.reduce(
-                (sum, entry) => sum + (entry.hours || 0),
-                0
-              );
+              const dailyHours = dayEntries.reduce((sum, entry) => sum + (entry.hours || 0), 0);
               return (
                 <tr key={key} className="border-b align-top">
                   <td className="p-2 whitespace-nowrap">
@@ -228,9 +208,7 @@ export function MonthEntriesClient({
                               <p className="text-sm font-medium text-slate-900">
                                 {entry.description}
                               </p>
-                              <p className="text-xs text-slate-600">
-                                {entry.hours.toFixed(2)} h
-                              </p>
+                              <p className="text-xs text-slate-600">{entry.hours.toFixed(2)} h</p>
                             </div>
                             <div className="flex flex-col items-end gap-1 text-xs">
                               <button
@@ -249,17 +227,12 @@ export function MonthEntriesClient({
                           </div>
                         </div>
                       ))}
-                      <button
-                        className="btn-secondary"
-                        onClick={() => openForm(dayNumber)}
-                      >
+                      <button className="btn-secondary" onClick={() => openForm(dayNumber)}>
                         {dayEntries.length ? "Adicionar atividade" : "Adicionar"}
                       </button>
                     </div>
                   </td>
-                  <td className="p-2 font-semibold text-slate-800">
-                    {dailyHours.toFixed(2)} h
-                  </td>
+                  <td className="p-2 font-semibold text-slate-800">{dailyHours.toFixed(2)} h</td>
                   <td className="p-2 text-right">
                     {form.day === dayNumber && (
                       <form
@@ -267,56 +240,41 @@ export function MonthEntriesClient({
                         className="space-y-2 rounded-md border border-slate-200 p-3 text-left"
                       >
                         <p className="text-sm font-semibold">
-                          {form.id ? "Editar" : "Nova"} atividade do dia{" "}
-                          {dayNumber}
+                          {form.id ? "Editar" : "Nova"} atividade do dia {dayNumber}
                         </p>
                         <div className="grid gap-2 md:grid-cols-2">
                           <div>
-                            <label className="text-xs text-slate-600">
-                              Início
-                            </label>
+                            <label className="text-xs text-slate-600">Início</label>
                             <input
                               type="time"
                               className="input"
                               value={form.startTime}
-                              onChange={(e) =>
-                                setForm({ ...form, startTime: e.target.value })
-                              }
+                              onChange={(e) => setForm({ ...form, startTime: e.target.value })}
                               required
                             />
                           </div>
                           <div>
-                            <label className="text-xs text-slate-600">
-                              Fim
-                            </label>
+                            <label className="text-xs text-slate-600">Fim</label>
                             <input
                               type="time"
                               className="input"
                               value={form.endTime}
-                              onChange={(e) =>
-                                setForm({ ...form, endTime: e.target.value })
-                              }
+                              onChange={(e) => setForm({ ...form, endTime: e.target.value })}
                               required
                             />
                           </div>
                         </div>
                         <div>
-                          <label className="text-xs text-slate-600">
-                            Descrição
-                          </label>
+                          <label className="text-xs text-slate-600">Descrição</label>
                           <input
                             className="input"
                             value={form.description}
-                            onChange={(e) =>
-                              setForm({ ...form, description: e.target.value })
-                            }
+                            onChange={(e) => setForm({ ...form, description: e.target.value })}
                             required
                           />
                         </div>
                         <div>
-                          <label className="text-xs text-slate-600">
-                            Carga horária (opcional)
-                          </label>
+                          <label className="text-xs text-slate-600">Carga horária (opcional)</label>
                           <input
                             type="number"
                             step="0.25"
@@ -325,9 +283,7 @@ export function MonthEntriesClient({
                             onChange={(e) =>
                               setForm({
                                 ...form,
-                                hours: e.target.value
-                                  ? Number(e.target.value)
-                                  : undefined,
+                                hours: e.target.value ? Number(e.target.value) : undefined,
                               })
                             }
                             placeholder="Calculada automaticamente"
@@ -337,11 +293,7 @@ export function MonthEntriesClient({
                           <button type="submit" className="btn-primary">
                             {form.id ? "Atualizar" : "Salvar"}
                           </button>
-                          <button
-                            type="button"
-                            className="btn-secondary"
-                            onClick={resetForm}
-                          >
+                          <button type="button" className="btn-secondary" onClick={resetForm}>
                             Cancelar
                           </button>
                         </div>
@@ -376,7 +328,10 @@ function MonthSelector({
   };
 
   return (
-    <form onSubmit={submit} className="flex items-center gap-2 rounded-md border border-slate-200 bg-white px-3 py-2">
+    <form
+      onSubmit={submit}
+      className="flex items-center gap-2 rounded-md border border-slate-200 bg-white px-3 py-2"
+    >
       <label className="text-sm text-slate-700">Ano</label>
       <input
         type="number"

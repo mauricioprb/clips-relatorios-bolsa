@@ -13,8 +13,7 @@ import { prisma } from "../prisma";
 const AFTERNOON_START_TIME = process.env.REPORT_START_TIME || "14:00";
 const MORNING_START_TIME = process.env.MORNING_START_TIME || "08:00";
 const MORNING_TARGET_HOURS =
-  Number(process.env.MORNING_TARGET_HOURS) &&
-  Number(process.env.MORNING_TARGET_HOURS) > 0
+  Number(process.env.MORNING_TARGET_HOURS) && Number(process.env.MORNING_TARGET_HOURS) > 0
     ? Number(process.env.MORNING_TARGET_HOURS)
     : 4;
 const DEFAULT_WEEKLY_WORKLOAD = 20;
@@ -24,10 +23,7 @@ const toDayKey = (date: Date) => date.toISOString().substring(0, 10);
 const sortByStart = <T extends { startTime: string }>(list: T[]) =>
   list.sort((a, b) => a.startTime.localeCompare(b.startTime));
 
-const bumpPastOverlap = (
-  startTime: string,
-  entries: { startTime: string; endTime: string }[],
-) => {
+const bumpPastOverlap = (startTime: string, entries: { startTime: string; endTime: string }[]) => {
   let candidate = startTime;
   for (const entry of sortByStart([...entries])) {
     const inRange =
@@ -44,9 +40,7 @@ const sumHours = (entries: Pick<DayEntry, "hours">[]) =>
   entries.reduce((sum, entry) => sum + (entry.hours || 0), 0);
 
 const getWeekStartKey = (date: Date) => {
-  const copy = new Date(
-    Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate()),
-  );
+  const copy = new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate()));
   const weekday = copy.getUTCDay(); // 0 sunday ... 6 saturday
   const diff = weekday === 0 ? -6 : 1 - weekday; // shift to Monday
   copy.setUTCDate(copy.getUTCDate() + diff);
@@ -65,14 +59,12 @@ const groupWorkingDaysByWeek = (days: Date[]) => {
 };
 
 const buildPriorityQueue = (defaults: DefaultActivity[]) => {
-  const sorted = [...defaults].sort(
-    (a, b) => a.description.localeCompare(b.description),
-  );
+  const sorted = [...defaults].sort((a, b) => a.description.localeCompare(b.description));
   const queue: DefaultActivity[] = [];
   for (const item of sorted) {
     // Peso fixo para todas as atividades, já que não temos mais prioridade numérica
     // Isso fará com que as atividades sejam distribuídas igualmente (round-robin)
-    const weight = 3; 
+    const weight = 3;
     for (let i = 0; i < weight; i += 1) {
       queue.push(item);
     }
@@ -110,14 +102,11 @@ class MonthService {
     const existingEntries = await prisma.dayEntry.findMany({
       where: { date: { gte: start, lt: end } },
     });
-    const entriesByDay = existingEntries.reduce<Record<string, DayEntry[]>>(
-      (acc, entry) => {
-        const key = toDayKey(entry.date);
-        acc[key] = acc[key] ? [...acc[key], entry] : [entry];
-        return acc;
-      },
-      {},
-    );
+    const entriesByDay = existingEntries.reduce<Record<string, DayEntry[]>>((acc, entry) => {
+      const key = toDayKey(entry.date);
+      acc[key] = acc[key] ? [...acc[key], entry] : [entry];
+      return acc;
+    }, {});
 
     const created: { id: string; date: Date }[] = [];
     let priorityIndex = 0;
@@ -129,18 +118,11 @@ class MonthService {
       for (const day of week) {
         const key = toDayKey(day);
         const dayEntries = entriesByDay[key] ? [...entriesByDay[key]] : [];
-        const slotsForDay = weeklySlots.filter(
-          (slot) => slot.weekday === day.getUTCDay(),
-        );
+        const slotsForDay = weeklySlots.filter((slot) => slot.weekday === day.getUTCDay());
 
         for (const slot of slotsForDay) {
-          const hours = Math.max(
-            calculateHours(slot.startTime, slot.endTime),
-            0,
-          );
-          const existingMatch = dayEntries.find(
-            (entry) => entry.description === slot.description,
-          );
+          const hours = Math.max(calculateHours(slot.startTime, slot.endTime), 0);
+          const existingMatch = dayEntries.find((entry) => entry.description === slot.description);
 
           if (existingMatch) {
             const updated = await prisma.dayEntry.update({
@@ -252,9 +234,7 @@ class MonthService {
 
         const nextBlocker = sortByStart(
           sortedEntries.filter(
-            (entry) =>
-              parseHoursFromTime(entry.startTime) >
-              parseHoursFromTime(cursor),
+            (entry) => parseHoursFromTime(entry.startTime) > parseHoursFromTime(cursor),
           ),
         )[0];
 
@@ -263,10 +243,7 @@ class MonthService {
           : shiftRemaining;
 
         if (endTime) {
-          windowHours = Math.min(
-            windowHours,
-            Math.max(calculateHours(cursor, endTime), 0),
-          );
+          windowHours = Math.min(windowHours, Math.max(calculateHours(cursor, endTime), 0));
         }
 
         const hoursToUse = Math.min(shiftRemaining, windowHours);

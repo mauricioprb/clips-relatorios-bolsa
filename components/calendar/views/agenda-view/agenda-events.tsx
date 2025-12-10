@@ -1,4 +1,5 @@
 import { format, parseISO } from "date-fns";
+import { ptBR } from "date-fns/locale";
 import type { FC } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -21,6 +22,7 @@ import {
   toCapitalize,
 } from "@/components/calendar/helpers";
 import { EventBullet } from "@/components/calendar/views/month-view/event-bullet";
+import { PRIORITY_LABELS } from "@/components/calendar/constants";
 
 export const AgendaEvents: FC = () => {
   const { events, use24HourFormat, badgeVariant, agendaModeGroupBy, selectedDate } = useCalendar();
@@ -48,8 +50,8 @@ export const AgendaEvents: FC = () => {
             key={date}
             heading={
               agendaModeGroupBy === "date"
-                ? format(parseISO(date), "EEEE, MMMM d, yyyy")
-                : toCapitalize(groupedEvents![0].color)
+                ? format(parseISO(date), "EEEE, d 'de' MMMM 'de' yyyy", { locale: ptBR })
+                : PRIORITY_LABELS[groupedEvents![0].color] || toCapitalize(groupedEvents![0].color)
             }
           >
             {groupedEvents!.map((event) => (
@@ -100,8 +102,8 @@ export const AgendaEvents: FC = () => {
                         </>
                       ) : (
                         <>
-                          <p className="text-sm">{format(event.startDate, "MM/dd/yyyy")}</p>
-                          <span className="text-sm">at</span>
+                          <p className="text-sm">{format(parseISO(event.startDate), "dd/MM/yyyy")}</p>
+                          <span className="text-sm">às</span>
                           <p className="text-sm">{formatTime(event.startDate, use24HourFormat)}</p>
                         </>
                       )}

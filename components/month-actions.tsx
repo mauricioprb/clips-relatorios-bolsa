@@ -30,10 +30,7 @@ export function MonthActions({ year, month, onAfterFill }: Props) {
   const generatePdf = async () => {
     setLoadingPdf(true);
     try {
-      const res = await fetch(
-        `/api/month/report-pdf?ano=${year}&mes=${month}`,
-        { method: "GET" }
-      );
+      const res = await fetch(`/api/month/report-pdf?ano=${year}&mes=${month}`, { method: "GET" });
       if (res.ok) {
         const blob = await res.blob();
         const url = URL.createObjectURL(blob);
@@ -50,20 +47,10 @@ export function MonthActions({ year, month, onAfterFill }: Props) {
 
   return (
     <div className="flex flex-wrap items-center gap-2">
-      <button
-        onClick={fillBlanks}
-        className="btn-secondary"
-        disabled={loadingFill}
-      >
-        {loadingFill
-          ? "Preenchendo..."
-          : "Aplicar grade semanal e completar dias em branco"}
+      <button onClick={fillBlanks} className="btn-secondary" disabled={loadingFill}>
+        {loadingFill ? "Preenchendo..." : "Completar dias"}
       </button>
-      <button
-        onClick={generatePdf}
-        className="btn-primary"
-        disabled={loadingPdf}
-      >
+      <button onClick={generatePdf} className="btn-primary" disabled={loadingPdf}>
         {loadingPdf ? "Gerando PDF..." : "Gerar PDF do relatório"}
       </button>
     </div>

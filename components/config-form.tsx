@@ -1,138 +1,175 @@
 "use client";
 
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import { z } from "zod";
 import { useState } from "react";
 
-export type ConfigData = {
-  bolsista: string;
-  orientador: string;
-  laboratorio: string;
-  bolsa: string;
-  weeklyWorkloadHours: number;
-};
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Loader2 } from "lucide-react";
+
+const formSchema = z.object({
+  bolsista: z.string().min(2, {
+    message: "Nome do bolsista deve ter pelo menos 2 caracteres.",
+  }),
+  orientador: z.string().min(2, {
+    message: "Nome do orientador deve ter pelo menos 2 caracteres.",
+  }),
+  laboratorio: z.string().min(2, {
+    message: "Nome do laboratório deve ter pelo menos 2 caracteres.",
+  }),
+  bolsa: z.string().min(2, {
+    message: "Nome da bolsa deve ter pelo menos 2 caracteres.",
+  }),
+  weeklyWorkloadHours: z.coerce.number().min(1, {
+    message: "Carga horária deve ser maior que 0.",
+  }),
+});
+
+export type ConfigData = z.infer<typeof formSchema>;
 
 export function ConfigForm({ initialData }: { initialData: ConfigData | null }) {
-  const [form, setForm] = useState<ConfigData>(
-    initialData || {
+  const [isLoading, setIsLoading] = useState(false);
+
+  const form = useForm<ConfigData>({
+    resolver: zodResolver(formSchema),
+    defaultValues: initialData || {
       bolsista: "",
       orientador: "",
       laboratorio: "",
       bolsa: "",
       weeklyWorkloadHours: 20,
-    }
-  );
-  const [status, setStatus] = useState<"idle" | "saving" | "saved" | "error">(
-    "idle"
-  );
-  const [message, setMessage] = useState("");
+    },
+  });
 
-  const updateField = <K extends keyof ConfigData>(key: K, value: ConfigData[K]) => {
-    setForm((prev) => ({ ...prev, [key]: value }));
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setStatus("saving");
-    setMessage("");
+  async function onSubmit(values: ConfigData) {
+    setIsLoading(true);
     try {
       const res = await fetch("/api/config", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+        body: JSON.stringify(values),
       });
+
       if (!res.ok) throw new Error("Erro ao salvar");
-      setStatus("saved");
-      setMessage("Configurações salvas com sucesso.");
-    } catch (err) {
-      console.error(err);
-      setStatus("error");
-      setMessage("Não foi possível salvar. Tente novamente.");
+
+      toast.success("Configurações salvas com sucesso.");
+    } catch (error) {
+      console.error(error);
+      toast.error("Não foi possível salvar as configurações.");
     } finally {
-      setTimeout(() => setStatus("idle"), 2500);
+      setIsLoading(false);
     }
-  };
+  }
 
   return (
-    <form onSubmit={handleSubmit} className="card space-y-4">
-      <div>
-        <label className="mb-1 block text-sm font-medium text-slate-700">
-          Nome do bolsista
-        </label>
-        <input
-          className="input"
-          value={form.bolsista}
-          onChange={(e) => updateField("bolsista", e.target.value)}
-          required
-        />
-      </div>
-      <div>
-        <label className="mb-1 block text-sm font-medium text-slate-700">
-          Orientador
-        </label>
-        <input
-          className="input"
-          value={form.orientador}
-          onChange={(e) => updateField("orientador", e.target.value)}
-          required
-        />
-      </div>
-      <div className="grid gap-4 md:grid-cols-2">
-        <div>
-          <label className="mb-1 block text-sm font-medium text-slate-700">
-            Laboratório / Sala
-          </label>
-          <input
-            className="input"
-            value={form.laboratorio}
-            onChange={(e) => updateField("laboratorio", e.target.value)}
-            required
-          />
-        </div>
-        <div>
-          <label className="mb-1 block text-sm font-medium text-slate-700">
-            Bolsa
-          </label>
-          <input
-            className="input"
-            value={form.bolsa}
-            onChange={(e) => updateField("bolsa", e.target.value)}
-            required
-          />
-        </div>
-        <div>
-          <label className="mb-1 block text-sm font-medium text-slate-700">
-            Carga horária semanal da bolsa (horas)
-          </label>
-          <input
-            className="input"
-            type="number"
-            min="1"
-            step="1"
-            value={form.weeklyWorkloadHours}
-            onChange={(e) =>
-              updateField("weeklyWorkloadHours", Number(e.target.value) || 0)
-            }
-            required
-          />
-        </div>
-      </div>
-      <div className="flex items-center gap-3">
-        <button
-          type="submit"
-          className="btn-primary"
-          disabled={status === "saving"}
-        >
-          {status === "saving" ? "Salvando..." : "Salvar"}
-        </button>
-        {message && (
-          <span
-            className={`text-sm ${
-              status === "error" ? "text-red-600" : "text-green-700"
-            }`}
-          >
-            {message}
-          </span>
-        )}
-      </div>
-    </form>
+    <Card>
+      <CardHeader>
+        <CardTitle>Dados do Bolsista</CardTitle>
+        <CardDescription>
+          Informe os dados que aparecerão no cabeçalho do relatório.
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            <div className="grid gap-4 md:grid-cols-2">
+              <FormField
+                control={form.control}
+                name="bolsista"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Nome do Bolsista</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Seu nome completo" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="orientador"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Nome do Orientador</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Nome do orientador" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="laboratorio"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Laboratório</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Ex: Lab. de Informática" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="bolsa"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Nome da Bolsa</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Ex: Iniciação Científica" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="weeklyWorkloadHours"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Carga Horária Semanal (horas)</FormLabel>
+                    <FormControl>
+                      <Input type="number" {...field} />
+                    </FormControl>
+                    <FormDescription>
+                      Total de horas que devem ser cumpridas por semana.
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+            <div className="flex justify-end">
+              <Button type="submit" disabled={isLoading}>
+                {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                Salvar alterações
+              </Button>
+            </div>
+          </form>
+        </Form>
+      </CardContent>
+    </Card>
   );
 }

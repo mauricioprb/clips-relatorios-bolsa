@@ -17,15 +17,10 @@ export default async function AtividadesPadraoPage() {
   return (
     <div className="space-y-4">
       <div>
-        <p className="text-sm uppercase tracking-wide text-slate-500">
-          Atividades padrão
-        </p>
-        <h1 className="text-2xl font-semibold text-slate-900">
-          Preenchimento automático
-        </h1>
+        <p className="text-sm uppercase tracking-wide text-slate-500">Atividades padrão</p>
+        <h1 className="text-2xl font-semibold text-slate-900">Preenchimento automático</h1>
         <p className="text-slate-600">
-          Defina atividades usadas para completar a carga horária semanal ao
-          preencher dias vazios.
+          Defina atividades usadas para completar a carga horária semanal ao preencher dias vazios.
         </p>
       </div>
       <DefaultActivitiesManager initialActivities={serialized} />

@@ -11,10 +11,7 @@ export async function PUT(req: NextRequest, { params }: Params) {
   const { description, color } = await req.json();
 
   if (!description || !color) {
-    return NextResponse.json(
-      { message: "Informe descrição e cor válida." },
-      { status: 400 }
-    );
+    return NextResponse.json({ message: "Informe descrição e cor válida." }, { status: 400 });
   }
 
   const activity = await defaultActivityService.update(id, {
