@@ -16,7 +16,6 @@ export function ModeToggle() {
   }, []);
 
   const toggleTheme = (e: React.MouseEvent<HTMLButtonElement>) => {
-    // @ts-expect-error View Transition API is not yet in all types
     if (!document.startViewTransition) {
       setTheme(resolvedTheme === "dark" ? "light" : "dark");
       return;
@@ -24,21 +23,14 @@ export function ModeToggle() {
 
     const x = e.clientX;
     const y = e.clientY;
-    const endRadius = Math.hypot(
-      Math.max(x, innerWidth - x),
-      Math.max(y, innerHeight - y)
-    );
+    const endRadius = Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y));
 
-    // @ts-expect-error View Transition API is not yet in all types
     const transition = document.startViewTransition(() => {
       setTheme(resolvedTheme === "dark" ? "light" : "dark");
     });
 
     transition.ready.then(() => {
-      const clipPath = [
-        `circle(0px at ${x}px ${y}px)`,
-        `circle(${endRadius}px at ${x}px ${y}px)`,
-      ];
+      const clipPath = [`circle(0px at ${x}px ${y}px)`, `circle(${endRadius}px at ${x}px ${y}px)`];
       document.documentElement.animate(
         {
           clipPath: clipPath,
@@ -47,18 +39,14 @@ export function ModeToggle() {
           duration: 400,
           easing: "ease-in",
           pseudoElement: "::view-transition-new(root)",
-        }
+        },
       );
     });
   };
 
   if (!mounted) {
     return (
-      <Button
-        variant="ghost"
-        size="icon"
-        className="rounded-full text-muted-foreground"
-      >
+      <Button variant="ghost" size="icon" className="rounded-full text-muted-foreground">
         <div className="h-[1.2rem] w-[1.2rem]" />
       </Button>
     );
