@@ -24,8 +24,7 @@ const mono = IBM_Plex_Mono({
 
 export const metadata: Metadata = {
   title: "Ciclaro | Relatórios de bolsista",
-  description:
-    "Sistema web para controle e geração automática de relatórios mensais de bolsista.",
+  description: "Sistema web para controle e geração automática de relatórios mensais de bolsista.",
 };
 
 export default function RootLayout({

@@ -57,9 +57,7 @@ export function FloatingNavbar() {
               <div
                 className={cn(
                   "relative flex items-center gap-2 rounded-full px-4 py-2 transition-all hover:bg-accent hover:text-accent-foreground",
-                  active
-                    ? "text-primary"
-                    : "text-muted-foreground",
+                  active ? "text-primary" : "text-muted-foreground",
                 )}
               >
                 {active && (
