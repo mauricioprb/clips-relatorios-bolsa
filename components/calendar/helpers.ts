@@ -48,12 +48,6 @@ export function rangeText(view: TCalendarView, date: Date): string {
 			start = startOfMonth(date);
 			end = endOfMonth(date);
 			break;
-		case "week":
-			start = startOfWeek(date, { locale: ptBR, weekStartsOn: WEEK_STARTS_ON });
-			end = endOfWeek(date, { locale: ptBR, weekStartsOn: WEEK_STARTS_ON });
-			break;
-		case "day":
-			return format(date, FORMAT_STRING, { locale: ptBR });
 		case "year":
 			start = startOfYear(date);
 			end = endOfYear(date);
@@ -80,8 +74,6 @@ export function navigateDate(
 ): Date {
 	const operations: Record<TCalendarView, (d: Date, n: number) => Date> = {
 		month: direction === "next" ? addMonths : subMonths,
-		week: direction === "next" ? addWeeks : subWeeks,
-		day: direction === "next" ? addDays : subDays,
 		year: direction === "next" ? addYears : subYears,
 		agenda: direction === "next" ? addMonths : subMonths,
 	};
@@ -95,8 +87,6 @@ export function getEventsCount(
 	view: TCalendarView,
 ): number {
 	const compareFns: Record<TCalendarView, (d1: Date, d2: Date) => boolean> = {
-		day: isSameDay,
-		week: isSameWeek,
 		month: isSameMonth,
 		year: isSameYear,
 		agenda: isSameMonth,
@@ -339,27 +329,7 @@ export const getEventsForDay = (
 		});
 };
 
-export const getWeekDates = (date: Date): Date[] => {
-	const startDate = startOfWeek(date, { weekStartsOn: 1 });
-	return Array.from({ length: 7 }, (_, i) => addDays(startDate, i));
-};
 
-export const getEventsForWeek = (events: IEvent[], date: Date): IEvent[] => {
-	const weekDates = getWeekDates(date);
-	const startOfWeekDate = weekDates[0];
-	const endOfWeekDate = weekDates[6];
-
-	return events.filter((event) => {
-		const eventStart = parseISO(event.startDate);
-		const eventEnd = parseISO(event.endDate);
-		return (
-			isValid(eventStart) &&
-			isValid(eventEnd) &&
-			eventStart <= endOfWeekDate &&
-			eventEnd >= startOfWeekDate
-		);
-	});
-};
 
 export const getEventsForMonth = (events: IEvent[], date: Date): IEvent[] => {
 	const startOfMonthDate = startOfMonth(date);
@@ -397,28 +367,31 @@ export const getEventsForYear = (events: IEvent[], date: Date): IEvent[] => {
 
 export const getColorClass = (color: string): string => {
 	const colorClasses: Record<TEventColor, string> = {
-		red: "border-red-200 bg-red-50 text-red-700 dark:border-red-800 dark:bg-red-950 dark:text-red-300",
-		yellow:
+		vermelho: "border-red-200 bg-red-50 text-red-700 dark:border-red-800 dark:bg-red-950 dark:text-red-300",
+		amarelo:
 			"border-yellow-200 bg-yellow-50 text-yellow-700 dark:border-yellow-800 dark:bg-yellow-950 dark:text-yellow-300",
-		green:
+		verde:
 			"border-green-200 bg-green-50 text-green-700 dark:border-green-800 dark:bg-green-950 dark:text-green-300",
-		blue: "border-blue-200 bg-blue-50 text-blue-700 dark:border-blue-800 dark:bg-blue-950 dark:text-blue-300",
-		orange:
+		azul: "border-blue-200 bg-blue-50 text-blue-700 dark:border-blue-800 dark:bg-blue-950 dark:text-blue-300",
+		laranja:
 			"border-orange-200 bg-orange-50 text-orange-700 dark:border-orange-800 dark:bg-orange-950 dark:text-orange-300",
-		purple:
+		roxo:
 			"border-purple-200 bg-purple-50 text-purple-700 dark:border-purple-800 dark:bg-purple-950 dark:text-purple-300",
+		cinza:
+			"border-gray-200 bg-gray-50 text-gray-700 dark:border-gray-800 dark:bg-gray-950 dark:text-gray-300",
 	};
 	return colorClasses[color as TEventColor] || "";
 };
 
 export const getBgColor = (color: string): string => {
 	const colorClasses: Record<TEventColor, string> = {
-		red: "bg-red-400 dark:bg-red-600",
-		yellow: "bg-yellow-400 dark:bg-yellow-600",
-		green: "bg-green-400 dark:bg-green-600",
-		blue: "bg-blue-400 dark:bg-blue-600",
-		orange: "bg-orange-400 dark:bg-orange-600",
-		purple: "bg-purple-400 dark:bg-purple-600",
+		vermelho: "bg-red-400 dark:bg-red-600",
+		amarelo: "bg-yellow-400 dark:bg-yellow-600",
+		verde: "bg-green-400 dark:bg-green-600",
+		azul: "bg-blue-400 dark:bg-blue-600",
+		laranja: "bg-orange-400 dark:bg-orange-600",
+		roxo: "bg-purple-400 dark:bg-purple-600",
+		cinza: "bg-gray-400 dark:bg-gray-600",
 	};
 	return colorClasses[color as TEventColor] || "";
 };
@@ -429,8 +402,6 @@ export const useGetEventsByMode = (events: IEvent[]) => {
 	switch (view) {
 		case "day":
 			return getEventsForDay(events, selectedDate);
-		case "week":
-			return getEventsForWeek(events, selectedDate);
 		case "agenda":
 		case "month":
 			return getEventsForMonth(events, selectedDate);

@@ -19,6 +19,7 @@ model Config {
   orientador  String
   laboratorio String
   bolsa       String
+  weeklyWorkloadHours Float   @default(20)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
@@ -36,8 +37,7 @@ model WeeklySlot {
 model DefaultActivity {
   id          String   @id @default(uuid())
   description String
-  hours       Float
-  priority    Int
+  color       String   @default("azul")
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
@@ -49,6 +49,7 @@ model DayEntry {
   endTime     String
   description String
   hours       Float
+  color       String   @default("azul")
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 

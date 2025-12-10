@@ -52,6 +52,7 @@ interface DayEntryApi {
   startTime?: string | null; // "HH:mm"
   endTime?: string | null; // "HH:mm"
   description: string;
+  color?: string;
 }
 
 const CalendarContext = createContext({} as ICalendarContext);
@@ -61,7 +62,7 @@ export function CalendarProvider({
   users,
   events,
   badge = "colored",
-  view = "day",
+  view = "month",
   initialDate,
 }: {
   children: React.ReactNode;
@@ -109,6 +110,7 @@ export function CalendarProvider({
       startTime,
       endTime,
       description: event.title || event.description,
+      color: event.color,
     };
   };
 
@@ -129,7 +131,7 @@ export function CalendarProvider({
       startDate,
       endDate,
       title: entry.description,
-      color: "blue",
+      color: (entry.color as TEventColor) || "azul",
       description: entry.description,
       user: defaultUser,
     };

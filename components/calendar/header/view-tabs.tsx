@@ -28,16 +28,6 @@ const tabs: TabConfig[] = [
     icon: CalendarRange,
   },
   {
-    name: "Dia",
-    value: "day",
-    icon: List,
-  },
-  {
-    name: "Semana",
-    value: "week",
-    icon: Columns,
-  },
-  {
     name: "Mês",
     value: "month",
     icon: Grid3X3,

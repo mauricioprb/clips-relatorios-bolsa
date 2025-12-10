@@ -5,13 +5,14 @@ import { Calendar } from "@/components/calendar/calendar";
 import { CalendarSkeleton } from "@/components/calendar/skeletons/calendar-skeleton";
 
 type Props = {
-  searchParams: { ano?: string; mes?: string };
+  searchParams: Promise<{ ano?: string; mes?: string }>;
 };
 
 export default async function MesPage({ searchParams }: Props) {
+  const resolvedSearchParams = await searchParams;
   const today = new Date();
-  const year = Number(searchParams?.ano) || today.getFullYear();
-  const month = Number(searchParams?.mes) || today.getMonth() + 1;
+  const year = Number(resolvedSearchParams?.ano) || today.getFullYear();
+  const month = Number(resolvedSearchParams?.mes) || today.getMonth() + 1;
 
   return (
     <div className="space-y-4">

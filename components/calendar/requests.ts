@@ -14,7 +14,11 @@ const combineDateAndTime = (date: Date, time: string) => {
 
 export const getEvents = async (year: number, month: number, user: IUser) => {
   // Garante que a grade semanal e atividades padrão sejam aplicadas sempre que o calendário carregar
-  await monthService.fillBlanks(year, month);
+  try {
+    await monthService.fillBlanks(year, month);
+  } catch (error) {
+    console.error("Não foi possível preencher automaticamente ao carregar o calendário", error);
+  }
 
   const { start, end } = getMonthRange(year, month);
   const entries = await prisma.dayEntry.findMany({
@@ -29,7 +33,7 @@ export const getEvents = async (year: number, month: number, user: IUser) => {
     startDate: combineDateAndTime(entry.date, entry.startTime),
     endDate: combineDateAndTime(entry.date, entry.endTime),
     title: entry.description,
-    color: "blue" as const,
+    color: (entry.color as any) || "azul",
     description: entry.description,
     user,
   }));

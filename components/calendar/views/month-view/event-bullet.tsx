@@ -7,17 +7,17 @@ import type { TEventColor } from "@/components/calendar/types";
 const eventBulletVariants = cva("size-2 rounded-full", {
 	variants: {
 		color: {
-			blue: "bg-blue-600 dark:bg-blue-500",
-			green: "bg-green-600 dark:bg-green-500",
-			red: "bg-red-600 dark:bg-red-500",
-			yellow: "bg-yellow-600 dark:bg-yellow-500",
-			purple: "bg-purple-600 dark:bg-purple-500",
-			orange: "bg-orange-600 dark:bg-orange-500",
-			gray: "bg-gray-600 dark:bg-gray-500",
+			azul: "bg-blue-600 dark:bg-blue-500",
+			verde: "bg-green-600 dark:bg-green-500",
+			vermelho: "bg-red-600 dark:bg-red-500",
+			amarelo: "bg-yellow-600 dark:bg-yellow-500",
+			roxo: "bg-purple-600 dark:bg-purple-500",
+			laranja: "bg-orange-600 dark:bg-orange-500",
+			cinza: "bg-gray-600 dark:bg-gray-500",
 		},
 	},
 	defaultVariants: {
-		color: "blue",
+		color: "azul",
 	},
 });
 

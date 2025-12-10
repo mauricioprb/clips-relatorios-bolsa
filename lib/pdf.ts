@@ -42,6 +42,11 @@ export async function generateReportPdf(data: ReportData) {
     doc.font("Helvetica-Bold").text(`${data.config.bolsa}`);
     doc.font("Helvetica");
 
+    // Carga horária semanal
+    doc.text("Carga horária semanal: ", { continued: true });
+    doc.font("Helvetica-Bold").text(formatHoursValue(data.config.weeklyWorkloadHours));
+    doc.font("Helvetica");
+
     // Mês/Ano
     doc.text("Mês/Ano: ", { continued: true });
     doc.font("Helvetica-Bold").text(`${String(data.month).padStart(2, "0")}/${data.year}`);

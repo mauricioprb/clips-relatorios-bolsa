@@ -31,7 +31,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { COLORS } from "@/components/calendar/constants";
+import { COLORS, PRIORITY_COLORS, PRIORITY_LABELS, BG_COLORS } from "@/components/calendar/constants";
 import { useCalendar } from "@/components/calendar/contexts/calendar-context";
 import { useDisclosure } from "@/components/calendar/hooks";
 import type { IEvent } from "@/components/calendar/interfaces";
@@ -90,7 +90,7 @@ export function AddEditEventDialog({ children, startDate, startTime, event }: IP
       title: event?.title ?? "",
       startDate: initialDates.startDate,
       endDate: initialDates.endDate,
-      color: event?.color ?? "blue",
+      color: event?.color ?? "azul",
     },
   });
 
@@ -184,22 +184,22 @@ export function AddEditEventDialog({ children, startDate, startTime, event }: IP
               name="color"
               render={({ field, fieldState }) => (
                 <FormItem>
-                  <FormLabel className="required">Variant</FormLabel>
+                  <FormLabel className="required">Prioridade</FormLabel>
                   <FormControl>
                     <Select value={field.value} onValueChange={field.onChange}>
                       <SelectTrigger
                         className={`w-full ${fieldState.invalid ? "border-red-500" : ""}`}
                       >
-                        <SelectValue placeholder="Selecione uma cor" />
+                        <SelectValue placeholder="Selecione uma prioridade" />
                       </SelectTrigger>
                       <SelectContent>
-                        {COLORS.map((color) => (
+                        {PRIORITY_COLORS.map((color) => (
                           <SelectItem value={color} key={color}>
                             <div className="flex items-center gap-2">
                               <div
-                                className={`size-3.5 rounded-full bg-${color}-600 dark:bg-${color}-700`}
+                                className={`size-3.5 rounded-full ${BG_COLORS[color]}`}
                               />
-                              {color}
+                              {PRIORITY_LABELS[color]}
                             </div>
                           </SelectItem>
                         ))}

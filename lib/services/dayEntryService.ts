@@ -7,6 +7,7 @@ export type DayEntryInput = {
   endTime: string;
   description: string;
   hours?: number;
+  color?: string;
 };
 
 class DayEntryService {
@@ -39,6 +40,7 @@ class DayEntryService {
         endTime: input.endTime,
         description: input.description,
         hours: computedHours,
+        color: input.color || "azul",
       },
     });
   }
@@ -59,6 +61,7 @@ class DayEntryService {
         endTime: input.endTime,
         description: input.description,
         hours: computedHours,
+        color: input.color || "azul",
       },
     });
   }

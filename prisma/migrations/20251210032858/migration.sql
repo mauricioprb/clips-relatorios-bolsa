@@ -5,6 +5,7 @@ CREATE TABLE "Config" (
     "orientador" TEXT NOT NULL,
     "laboratorio" TEXT NOT NULL,
     "bolsa" TEXT NOT NULL,
+    "weeklyWorkloadHours" DOUBLE PRECISION NOT NULL DEFAULT 20,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
@@ -28,8 +29,7 @@ CREATE TABLE "WeeklySlot" (
 CREATE TABLE "DefaultActivity" (
     "id" TEXT NOT NULL,
     "description" TEXT NOT NULL,
-    "hours" DOUBLE PRECISION NOT NULL,
-    "priority" INTEGER NOT NULL,
+    "color" TEXT NOT NULL DEFAULT 'azul',
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
@@ -44,6 +44,7 @@ CREATE TABLE "DayEntry" (
     "endTime" TEXT NOT NULL,
     "description" TEXT NOT NULL,
     "hours" DOUBLE PRECISION NOT NULL,
+    "color" TEXT NOT NULL DEFAULT 'azul',
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 

@@ -18,7 +18,7 @@ export async function proxy(req: NextRequest) {
     const existingSession = await verifySessionToken(req.cookies.get(SESSION_COOKIE)?.value);
 
     if (existingSession && pathname === "/login") {
-      return NextResponse.redirect(new URL("/dashboard", req.url));
+      return NextResponse.redirect(new URL("/mes", req.url));
     }
 
     return NextResponse.next();

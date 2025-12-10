@@ -6,7 +6,7 @@ type Params = {
 };
 
 export async function PUT(req: NextRequest, { params }: Params) {
-  const { id } = params;
+  const { id } = await params;
   const { weekday, startTime, endTime, description } = await req.json();
   const weekdayNumber = Number(weekday);
 
@@ -25,7 +25,7 @@ export async function PUT(req: NextRequest, { params }: Params) {
 }
 
 export async function DELETE(_req: NextRequest, { params }: Params) {
-  const { id } = params;
+  const { id } = await params;
   if (!id) {
     return NextResponse.json({ message: "ID não informado." }, { status: 400 });
   }

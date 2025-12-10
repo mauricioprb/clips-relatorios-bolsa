@@ -1,11 +1,11 @@
-import { TopBar } from "@/components/top-bar";
+import { FloatingNavbar } from "@/components/floating-navbar";
 import { ReactNode } from "react";
 
 export default function ProtectedLayout({ children }: { children: ReactNode }) {
   return (
     <div className="min-h-screen bg-slate-50">
-      <TopBar />
-      <main className="mx-auto max-w-6xl px-4 py-6">{children}</main>
+      <FloatingNavbar />
+      <main className="mx-auto max-w-6xl px-4 pb-6 pt-24">{children}</main>
     </div>
   );
 }

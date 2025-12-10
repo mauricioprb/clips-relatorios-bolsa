@@ -18,21 +18,19 @@ export const useLocalStorage = <T>(
   key: string,
   initialValue: T,
 ): [T, (value: T | ((prev: T) => T)) => void] => {
-  const readValue = (): T => {
-    if (typeof window === "undefined") {
-      return initialValue;
-    }
+  // Initialize with initialValue to avoid hydration mismatch
+  const [storedValue, setStoredValue] = useState<T>(initialValue);
 
+  useEffect(() => {
     try {
       const item = window.localStorage.getItem(key);
-      return item ? (JSON.parse(item) as T) : initialValue;
+      if (item) {
+        setStoredValue(JSON.parse(item) as T);
+      }
     } catch (error) {
       console.warn(`Error reading localStorage key "${key}":`, error);
-      return initialValue;
     }
-  };
-
-  const [storedValue, setStoredValue] = useState<T>(readValue);
+  }, [key]);
 
   const setValue = (value: T | ((prev: T) => T)) => {
     try {
@@ -52,17 +50,11 @@ export const useLocalStorage = <T>(
 };
 
 export function useMediaQuery(query: string): boolean {
-  const getMatches = () => {
-    if (typeof window === "undefined") return false;
-    return window.matchMedia(query).matches;
-  };
-
-  const [matches, setMatches] = useState<boolean>(getMatches);
+  const [matches, setMatches] = useState<boolean>(false);
 
   useEffect(() => {
-    if (typeof window === "undefined") return;
-
     const media = window.matchMedia(query);
+    setMatches(media.matches);
 
     const listener = (event: MediaQueryListEvent) => {
       setMatches(event.matches);

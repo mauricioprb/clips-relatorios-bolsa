@@ -7,22 +7,17 @@ export async function GET() {
 }
 
 export async function POST(req: NextRequest) {
-  const { description, hours, priority } = await req.json();
-  if (!description || hours === undefined || priority === undefined) {
+  const { description, color } = await req.json();
+  if (!description || !color) {
     return NextResponse.json(
-      { message: "Informe descrição, horas e prioridade." },
+      { message: "Informe descrição e cor." },
       { status: 400 }
     );
   }
 
-  const parsedHours = Number(hours);
-  const parsedPriority = Number(priority);
-
   const activity = await defaultActivityService.create({
     description,
-    hours: parsedHours,
-    priority: parsedPriority,
+    color,
   });
-
   return NextResponse.json(activity);
 }

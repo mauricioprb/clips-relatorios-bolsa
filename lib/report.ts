@@ -18,6 +18,7 @@ export type ReportData = {
     orientador: string;
     laboratorio: string;
     bolsa: string;
+    weeklyWorkloadHours: number;
   };
   days: ReportDay[];
   totalHours: number;
@@ -32,6 +33,7 @@ export async function fetchReportData(year: number, month: number) {
     orientador: "Não informado",
     laboratorio: "Não informado",
     bolsa: "Não informada",
+    weeklyWorkloadHours: 0,
   };
 
   const { start, end } = getMonthRange(year, month);
@@ -78,6 +80,7 @@ export async function fetchReportData(year: number, month: number) {
       orientador: configData.orientador,
       laboratorio: configData.laboratorio,
       bolsa: configData.bolsa,
+      weeklyWorkloadHours: configData.weeklyWorkloadHours ?? 0,
     },
     days,
     totalHours,

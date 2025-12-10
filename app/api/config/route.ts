@@ -9,16 +9,31 @@ export async function GET() {
 export async function POST(req: NextRequest) {
   const data = await req.json();
 
-  const { bolsista, orientador, laboratorio, bolsa } = data;
+  const { bolsista, orientador, laboratorio, bolsa, weeklyWorkloadHours } = data;
 
-  if (!bolsista || !orientador || !laboratorio || !bolsa) {
+  const parsedWeeklyHours = Number(weeklyWorkloadHours);
+
+  if (
+    !bolsista ||
+    !orientador ||
+    !laboratorio ||
+    !bolsa ||
+    Number.isNaN(parsedWeeklyHours) ||
+    parsedWeeklyHours <= 0
+  ) {
     return NextResponse.json(
-      { message: "Todos os campos são obrigatórios." },
+      { message: "Todos os campos são obrigatórios e a carga horária deve ser maior que zero." },
       { status: 400 }
     );
   }
 
-  const payload = { bolsista, orientador, laboratorio, bolsa };
+  const payload = {
+    bolsista,
+    orientador,
+    laboratorio,
+    bolsa,
+    weeklyWorkloadHours: parsedWeeklyHours,
+  };
   const saved = await configService.saveConfig(payload);
 
   return NextResponse.json(saved);

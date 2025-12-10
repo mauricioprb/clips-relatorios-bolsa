@@ -1,8 +1,9 @@
-export type TCalendarView = "day" | "week" | "month" | "year" | "agenda";
+export type TCalendarView = "month" | "year" | "agenda";
 export type TEventColor =
-	| "blue"
-	| "green"
-	| "red"
-	| "yellow"
-	| "purple"
-	| "orange";
+	| "azul"
+	| "verde"
+	| "vermelho"
+	| "amarelo"
+	| "roxo"
+	| "laranja"
+	| "cinza";

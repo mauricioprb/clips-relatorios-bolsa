@@ -7,6 +7,7 @@ export type ConfigData = {
   orientador: string;
   laboratorio: string;
   bolsa: string;
+  weeklyWorkloadHours: number;
 };
 
 export function ConfigForm({ initialData }: { initialData: ConfigData | null }) {
@@ -16,6 +17,7 @@ export function ConfigForm({ initialData }: { initialData: ConfigData | null }) 
       orientador: "",
       laboratorio: "",
       bolsa: "",
+      weeklyWorkloadHours: 20,
     }
   );
   const [status, setStatus] = useState<"idle" | "saving" | "saved" | "error">(
@@ -23,7 +25,7 @@ export function ConfigForm({ initialData }: { initialData: ConfigData | null }) 
   );
   const [message, setMessage] = useState("");
 
-  const updateField = (key: keyof ConfigData, value: string) => {
+  const updateField = <K extends keyof ConfigData>(key: K, value: ConfigData[K]) => {
     setForm((prev) => ({ ...prev, [key]: value }));
   };
 
@@ -93,6 +95,22 @@ export function ConfigForm({ initialData }: { initialData: ConfigData | null }) 
             className="input"
             value={form.bolsa}
             onChange={(e) => updateField("bolsa", e.target.value)}
+            required
+          />
+        </div>
+        <div>
+          <label className="mb-1 block text-sm font-medium text-slate-700">
+            Carga horária semanal da bolsa (horas)
+          </label>
+          <input
+            className="input"
+            type="number"
+            min="1"
+            step="1"
+            value={form.weeklyWorkloadHours}
+            onChange={(e) =>
+              updateField("weeklyWorkloadHours", Number(e.target.value) || 0)
+            }
             required
           />
         </div>

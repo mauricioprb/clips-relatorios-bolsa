@@ -1,25 +1,25 @@
 "use client";
 
 import { useState } from "react";
+import { COLORS, BG_COLORS, BG_LIGHT_COLORS, BG_HOVER_COLORS, PRIORITY_COLORS, PRIORITY_LABELS } from "@/components/calendar/constants";
+import { TEventColor } from "@/components/calendar/types";
+import { cn } from "@/lib/utils";
 
 export type DefaultActivity = {
   id: string;
   description: string;
-  hours: number;
-  priority: number;
+  color: string;
 };
 
 type FormState = {
   id?: string;
   description: string;
-  hours: number;
-  priority: number;
+  color: string;
 };
 
 const emptyForm: FormState = {
   description: "",
-  hours: 2,
-  priority: 1,
+  color: "azul",
 };
 
 export function DefaultActivitiesManager({
@@ -37,8 +37,7 @@ export function DefaultActivitiesManager({
 
     const payload = {
       description: form.description,
-      hours: Number(form.hours),
-      priority: Number(form.priority),
+      color: form.color,
     };
 
     const res = await fetch(
@@ -59,7 +58,7 @@ export function DefaultActivitiesManager({
           return prev.map((item) => (item.id === saved.id ? saved : item));
         }
         return [...prev, saved].sort(
-          (a, b) => a.priority - b.priority || a.description.localeCompare(b.description)
+          (a, b) => a.description.localeCompare(b.description)
         );
       });
       setForm(emptyForm);
@@ -72,8 +71,7 @@ export function DefaultActivitiesManager({
     setForm({
       id: activity.id,
       description: activity.description,
-      hours: activity.hours,
-      priority: activity.priority,
+      color: activity.color,
     });
   };
 
@@ -98,36 +96,45 @@ export function DefaultActivitiesManager({
             <thead>
               <tr className="border-b bg-slate-50 text-left">
                 <th className="p-2">Descrição</th>
-                <th className="p-2">Horas</th>
-                <th className="p-2">Prioridade</th>
+                <th className="p-2">Cor</th>
                 <th className="p-2 text-right">Ações</th>
               </tr>
             </thead>
             <tbody>
-              {activities.map((activity) => (
-                <tr key={activity.id} className="border-b">
-                  <td className="p-2">{activity.description}</td>
-                  <td className="p-2">{activity.hours} h</td>
-                  <td className="p-2">{activity.priority}</td>
-                  <td className="p-2 text-right">
-                    <button
-                      className="btn-secondary mr-2"
-                      onClick={() => startEdit(activity)}
-                    >
-                      Editar
-                    </button>
-                    <button
-                      className="text-red-600 hover:underline"
-                      onClick={() => deleteActivity(activity.id)}
-                    >
-                      Excluir
-                    </button>
-                  </td>
-                </tr>
-              ))}
+              {activities.map((activity) => {
+                const color = activity.color as TEventColor;
+                const bgClass = BG_COLORS[color] || BG_COLORS.azul;
+                return (
+                  <tr key={activity.id} className="border-b">
+                    <td className="p-2">{activity.description}</td>
+                    <td className="p-2">
+                      <div className="flex items-center gap-2">
+                        <div
+                          className={cn("h-4 w-4 rounded-full", bgClass)}
+                        />
+                        <span className="capitalize">{PRIORITY_LABELS[activity.color] || activity.color}</span>
+                      </div>
+                    </td>
+                    <td className="p-2 text-right">
+                      <button
+                        className="btn-secondary mr-2"
+                        onClick={() => startEdit(activity)}
+                      >
+                        Editar
+                      </button>
+                      <button
+                        className="text-red-600 hover:underline"
+                        onClick={() => deleteActivity(activity.id)}
+                      >
+                        Excluir
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })}
               {activities.length === 0 && (
                 <tr>
-                  <td colSpan={4} className="p-3 text-center text-slate-500">
+                  <td colSpan={3} className="p-3 text-center text-slate-500">
                     Nenhuma atividade padrão cadastrada.
                   </td>
                 </tr>
@@ -152,39 +159,35 @@ export function DefaultActivitiesManager({
             required
           />
         </div>
-        <div className="grid gap-3 md:grid-cols-2">
-          <div>
-            <label className="mb-1 block text-sm font-medium text-slate-700">
-              Horas
-            </label>
-            <input
-              className="input"
-              type="number"
-              step="0.5"
-              min="0"
-              value={form.hours}
-              onChange={(e) =>
-                setForm({ ...form, hours: Number(e.target.value) })
-              }
-              required
-            />
-          </div>
-          <div>
-            <label className="mb-1 block text-sm font-medium text-slate-700">
-              Prioridade (menor = maior)
-            </label>
-            <input
-              className="input"
-              type="number"
-              value={form.priority}
-              onChange={(e) =>
-                setForm({ ...form, priority: Number(e.target.value) })
-              }
-              required
-            />
+        <div>
+          <label className="mb-1 block text-sm font-medium text-slate-700">
+            Prioridade
+          </label>
+          <div className="flex flex-wrap gap-2">
+            {PRIORITY_COLORS.map((color) => {
+              const isSelected = form.color === color;
+              const bgClass = BG_COLORS[color];
+              
+              return (
+                <button
+                  key={color}
+                  type="button"
+                  onClick={() => setForm({ ...form, color })}
+                  className={cn(
+                    "flex items-center gap-2 rounded-md border px-3 py-2 transition-all",
+                    isSelected
+                      ? "border-slate-900 bg-slate-50"
+                      : "border-slate-200 hover:border-slate-300"
+                  )}
+                >
+                  <div className={cn("h-4 w-4 rounded-full", bgClass)} />
+                  <span className="text-sm font-medium">{PRIORITY_LABELS[color]}</span>
+                </button>
+              );
+            })}
           </div>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 pt-2">
           <button type="submit" className="btn-primary" disabled={saving}>
             {saving ? "Salvando..." : form.id ? "Atualizar" : "Criar"}
           </button>

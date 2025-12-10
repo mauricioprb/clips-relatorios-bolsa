@@ -24,7 +24,7 @@ export default function LoginPage() {
     setLoading(false);
 
     if (res.ok) {
-      router.push("/dashboard");
+      router.push("/mes");
     } else {
       const data = await res.json().catch(() => ({}));
       setError(data?.message || "Usuário ou senha inválidos.");

@@ -10,8 +10,9 @@ Crie um arquivo `.env` a partir de `.env.example`:
   - Fora do Docker: troque o host para `localhost`.
 - `ADMIN_USERNAME` / `ADMIN_PASSWORD` – credenciais de login.
 - `SESSION_SECRET` – chave para assinar o JWT de sessão.
-- `DAILY_TARGET_HOURS` – meta de horas por dia usada ao preencher dias vazios (ex.: `4` ou `6`).
 - `REPORT_START_TIME` – horário inicial padrão ao preencher dias vazios (ex.: `14:00`).
+
+A carga horária semanal da bolsa agora é definida na página **Configurações** da aplicação.
 
 ## Rodando local (sem Docker)
 1. Instale dependências:
@@ -51,6 +52,6 @@ docker compose exec app npx prisma migrate deploy
 
 ## Fluxo
 1. Faça login em `/login`.
-2. Cadastre os dados do bolsista em `/config`.
+2. Cadastre os dados do bolsista e a carga horária semanal da bolsa em `/config`.
 3. Configure grade semanal em `/grade-semanal` e atividades padrão em `/atividades-padrao`.
 4. Use `/mes?ano=YYYY&mes=M` para registrar/editar atividades do mês, preencher dias vazios automaticamente e gerar o PDF do relatório.

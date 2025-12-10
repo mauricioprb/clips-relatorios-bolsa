@@ -2,14 +2,13 @@ import { prisma } from "../prisma";
 
 export type DefaultActivityInput = {
   description: string;
-  hours: number;
-  priority: number;
+  color: string;
 };
 
 class DefaultActivityService {
   async list() {
     return prisma.defaultActivity.findMany({
-      orderBy: [{ priority: "asc" }, { description: "asc" }],
+      orderBy: [{ description: "asc" }],
     });
   }
 

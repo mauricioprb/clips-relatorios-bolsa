@@ -5,6 +5,7 @@ export type ConfigInput = {
   orientador: string;
   laboratorio: string;
   bolsa: string;
+  weeklyWorkloadHours: number;
 };
 
 class ConfigService {

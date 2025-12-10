@@ -19,7 +19,7 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
-  const { date, startTime, endTime, description, hours } = await req.json();
+  const { date, startTime, endTime, description, hours, color } = await req.json();
 
   if (!date || !description) {
     return NextResponse.json({ message: "Data e descrição são obrigatórias." }, { status: 400 });
@@ -31,6 +31,7 @@ export async function POST(req: NextRequest) {
     endTime,
     description,
     hours,
+    color,
   });
 
   return NextResponse.json(entry);
