@@ -5,7 +5,9 @@ import { cookies, headers } from "next/headers";
 export const SESSION_COOKIE = "bagunca_session";
 
 type SessionPayload = JWTPayload & {
-  username?: string;
+  id?: string;
+  email?: string;
+  name?: string;
 };
 
 const getSecretKey = () => {
@@ -25,8 +27,8 @@ export const sessionCookieOptions = {
   path: "/",
 };
 
-export async function createSessionToken(username: string) {
-  const token = await new SignJWT({ username })
+export async function createSessionToken(payload: { id: string; email: string; name?: string }) {
+  const token = await new SignJWT(payload)
     .setProtectedHeader({ alg: "HS256" })
     .setIssuedAt()
     .setExpirationTime("7d")
@@ -48,12 +50,14 @@ export async function verifySessionToken(
 }
 
 export async function getSessionFromCookies(): Promise<SessionPayload | null> {
-  const token = cookies().get(SESSION_COOKIE)?.value;
+  const cookieStore = await cookies();
+  const token = cookieStore.get(SESSION_COOKIE)?.value;
   return verifySessionToken(token);
 }
 
 export async function getSessionFromHeaders(): Promise<SessionPayload | null> {
-  const cookieHeader = headers().get("cookie");
+  const headersList = await headers();
+  const cookieHeader = headersList.get("cookie");
   if (!cookieHeader) return null;
   const token = cookieHeader
     .split(";")

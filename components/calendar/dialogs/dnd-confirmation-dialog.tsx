@@ -15,7 +15,7 @@ const DndConfirmationDialog = memo(() => {
 	return (
 		<EventDropConfirmationDialog
 			open={showConfirmation}
-			onOpenChange={() => {}} // Controlled by context
+			onOpenChange={() => {}}
 			event={pendingDropData.event}
 			newStartDate={pendingDropData.newStartDate}
 			newEndDate={pendingDropData.newEndDate}

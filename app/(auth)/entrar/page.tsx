@@ -3,6 +3,7 @@
 import { useState, FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import Link from "next/link";
 import { Loader2, LogIn } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -19,7 +20,7 @@ import {
 
 export default function LoginPage() {
   const router = useRouter();
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -33,7 +34,7 @@ export default function LoginPage() {
       const res = await fetch("/api/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, password }),
+        body: JSON.stringify({ email, password }),
       });
 
       if (res.ok) {
@@ -73,13 +74,14 @@ export default function LoginPage() {
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="grid gap-3">
-              <Label htmlFor="username">Usuário</Label>
+              <Label htmlFor="email">Email</Label>
               <Input
-                id="username"
-                placeholder="Digite seu usuário"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                autoComplete="username"
+                id="email"
+                type="email"
+                placeholder="Digite seu email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                autoComplete="email"
                 required
                 disabled={loading}
                 className="bg-background/50"
@@ -123,7 +125,13 @@ export default function LoginPage() {
             </Button>
           </form>
         </CardContent>
-        <CardFooter className="flex flex-col gap-2 text-center text-xs text-muted-foreground">
+        <CardFooter className="flex flex-col gap-4 text-center text-xs text-muted-foreground">
+          <p>
+            Não tem uma conta?{" "}
+            <Link href="/cadastro" className="text-primary hover:underline font-medium">
+              Criar conta
+            </Link>
+          </p>
           <p>Sistema de Gestão de Atividades</p>
         </CardFooter>
       </Card>

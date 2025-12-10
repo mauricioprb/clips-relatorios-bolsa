@@ -113,21 +113,18 @@ export function DndProvider({
 			);
 			const originalStart = new Date(draggedEvent.startDate);
 
-			// Check if dropped in same position
 			if (isSamePosition(originalStart, newStart)) {
 				endDrag();
 				return;
 			}
 
 			if (showConfirmation) {
-				// Show confirmation dialog if user wants it
 				setPendingDropData({
 					event: draggedEvent,
 					newStartDate: newStart,
 					newEndDate: newEnd,
 				});
 			} else {
-				// Instantly update event if user doesn't want confirmation
 				const callback = onEventDroppedRef.current;
 				if (callback) {
 					callback(draggedEvent, newStart, newEnd);
@@ -150,7 +147,6 @@ export function DndProvider({
 			);
 		}
 
-		// Reset states
 		setPendingDropData(null);
 		endDrag();
 	}, [pendingDropData, endDrag]);
@@ -160,7 +156,6 @@ export function DndProvider({
 		endDrag();
 	}, [endDrag]);
 
-	// Default event update handler
 	const handleEventUpdate = useCallback(
 		(event: IEvent, newStartDate: Date, newEndDate: Date) => {
 			try {
@@ -178,12 +173,10 @@ export function DndProvider({
 		[updateEvent],
 	);
 
-	// Set default callback
 	React.useEffect(() => {
 		onEventDroppedRef.current = handleEventUpdate;
 	}, [handleEventUpdate]);
 
-	// When the prop changes, update the state
 	React.useEffect(() => {
 		setShowConfirmation(showConfirmationProp);
 	}, [showConfirmationProp]);

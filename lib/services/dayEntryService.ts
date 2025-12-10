@@ -25,6 +25,15 @@ class DayEntryService {
     });
   }
 
+  async listByYear(year: number) {
+    const start = new Date(Date.UTC(year, 0, 1, 0, 0, 0));
+    const end = new Date(Date.UTC(year + 1, 0, 1, 0, 0, 0));
+    return prisma.dayEntry.findMany({
+      where: { date: { gte: start, lt: end } },
+      orderBy: [{ date: "asc" }, { startTime: "asc" }],
+    });
+  }
+
   async create(input: DayEntryInput) {
     const parsedDate = new Date(input.date);
     const computedHours = Math.max(

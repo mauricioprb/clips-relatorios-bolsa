@@ -25,7 +25,7 @@ interface ResizableEventBlockProps {
 
 const PIXELS_PER_HOUR = 96;
 const MINUTES_PER_PIXEL = 60 / PIXELS_PER_HOUR;
-const MIN_DURATION = 15; // in minutes
+const MIN_DURATION = 15;
 
 export function ResizableEvent({
 	event,

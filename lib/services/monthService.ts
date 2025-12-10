@@ -41,8 +41,8 @@ const sumHours = (entries: Pick<DayEntry, "hours">[]) =>
 
 const getWeekStartKey = (date: Date) => {
   const copy = new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate()));
-  const weekday = copy.getUTCDay(); // 0 sunday ... 6 saturday
-  const diff = weekday === 0 ? -6 : 1 - weekday; // shift to Monday
+  const weekday = copy.getUTCDay();
+  const diff = weekday === 0 ? -6 : 1 - weekday;
   copy.setUTCDate(copy.getUTCDate() + diff);
   return toDayKey(copy);
 };
@@ -62,8 +62,6 @@ const buildPriorityQueue = (defaults: DefaultActivity[]) => {
   const sorted = [...defaults].sort((a, b) => a.description.localeCompare(b.description));
   const queue: DefaultActivity[] = [];
   for (const item of sorted) {
-    // Peso fixo para todas as atividades, já que não temos mais prioridade numérica
-    // Isso fará com que as atividades sejam distribuídas igualmente (round-robin)
     const weight = 3;
     for (let i = 0; i < weight; i += 1) {
       queue.push(item);
@@ -114,7 +112,6 @@ class MonthService {
     const workingWeeks = groupWorkingDaysByWeek(getWorkingDays(year, month));
 
     for (const week of workingWeeks) {
-      // Apply weekly slots first
       for (const day of week) {
         const key = toDayKey(day);
         const dayEntries = entriesByDay[key] ? [...entriesByDay[key]] : [];
@@ -142,16 +139,16 @@ class MonthService {
           }
 
           const entry = await prisma.dayEntry.create({
+          const entry = await prisma.dayEntry.create({
             data: {
               date: day,
               description: slot.description,
               startTime: slot.startTime,
               endTime: slot.endTime,
               hours,
-              color: "cinza", // Grade semanal padrão cinza
+              color: "cinza",
             },
           });
-
           dayEntries.push(entry);
           created.push({ id: entry.id, date: entry.date });
         }

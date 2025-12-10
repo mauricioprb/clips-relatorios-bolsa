@@ -1,40 +1,56 @@
-import { NextRequest, NextResponse } from "next/server";
-import { SESSION_COOKIE, verifySessionToken } from "./lib/auth";
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
+import { verifySessionToken, SESSION_COOKIE } from "@/lib/auth";
 
-const PUBLIC_PATHS = ["/login", "/api/login"];
+const protectedRoutes = [
+  "/mes",
+  "/grade-semanal",
+  "/atividades-padrao",
+  "/configuracoes",
+  "/painel",
+];
 
-export async function proxy(req: NextRequest) {
-  const { pathname } = req.nextUrl;
+const authRoutes = ["/entrar", "/cadastro"];
 
-  if (
-    pathname.startsWith("/_next") ||
-    pathname.startsWith("/favicon.ico") ||
-    pathname.startsWith("/public")
-  ) {
-    return NextResponse.next();
+export async function proxy(request: NextRequest) {
+  const token = request.cookies.get(SESSION_COOKIE)?.value;
+  const session = await verifySessionToken(token);
+  const { pathname } = request.nextUrl;
+
+  const isProtectedRoute = protectedRoutes.some((route) =>
+    pathname.startsWith(route)
+  );
+  const isAuthRoute = authRoutes.some((route) => pathname.startsWith(route));
+
+  if (isProtectedRoute && !session) {
+    return NextResponse.redirect(new URL("/entrar", request.url));
   }
 
-  if (PUBLIC_PATHS.some((path) => pathname.startsWith(path))) {
-    const existingSession = await verifySessionToken(req.cookies.get(SESSION_COOKIE)?.value);
+  if (isAuthRoute && session) {
+    return NextResponse.redirect(new URL("/mes", request.url));
+  }
 
-    if (existingSession && pathname === "/login") {
-      return NextResponse.redirect(new URL("/mes", req.url));
+  if (pathname === "/") {
+    if (session) {
+      return NextResponse.redirect(new URL("/mes", request.url));
+    } else {
+      return NextResponse.redirect(new URL("/entrar", request.url));
     }
-
-    return NextResponse.next();
-  }
-
-  const session = await verifySessionToken(req.cookies.get(SESSION_COOKIE)?.value);
-
-  if (!session) {
-    const loginUrl = new URL("/login", req.url);
-    loginUrl.searchParams.set("redirectTo", pathname);
-    return NextResponse.redirect(loginUrl);
   }
 
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: ["/((?!_next/static|_next/image|.*\\.png$|.*\\.svg$).*)"],
+  matcher: [
+    /*
+     * Match all request paths except for the ones starting with:
+     * - api (API routes)
+     * - _next/static (static files)
+     * - _next/image (image optimization files)
+     * - favicon.ico (favicon file)
+     * - public files (svg, png, etc)
+     */
+    "/((?!api|_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
+  ],
 };

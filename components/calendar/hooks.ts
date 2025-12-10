@@ -18,7 +18,6 @@ export const useLocalStorage = <T>(
   key: string,
   initialValue: T,
 ): [T, (value: T | ((prev: T) => T)) => void] => {
-  // Initialize with initialValue to avoid hydration mismatch
   const [storedValue, setStoredValue] = useState<T>(initialValue);
 
   useEffect(() => {

@@ -27,7 +27,7 @@ const links = [
   { href: "/mes", label: "Mês", icon: Calendar },
   { href: "/grade-semanal", label: "Grade", icon: CalendarDays },
   { href: "/atividades-padrao", label: "Atividades", icon: ListChecks },
-  { href: "/config", label: "Configurações", icon: Settings },
+  { href: "/configuracoes", label: "Configurações", icon: Settings },
 ];
 
 export function FloatingNavbar() {
@@ -40,7 +40,7 @@ export function FloatingNavbar() {
     setLoading(true);
     try {
       await fetch("/api/logout", { method: "POST" });
-      router.push("/login");
+      router.push("/entrar");
     } finally {
       setLoading(false);
     }
@@ -50,7 +50,6 @@ export function FloatingNavbar() {
 
   return (
     <div className="fixed top-4 left-0 right-0 z-50 flex justify-center">
-      {/* Desktop Menu */}
       <nav className="hidden md:flex items-center gap-1 rounded-full border border-border bg-background/80 p-2 shadow-lg backdrop-blur-md">
         <div className="pl-4 pr-2">
           <Image
@@ -124,7 +123,6 @@ export function FloatingNavbar() {
         </TooltipProvider>
       </nav>
 
-      {/* Mobile Menu */}
       <nav
         className="md:hidden mx-4 border border-border bg-background/80 shadow-lg backdrop-blur-md overflow-hidden rounded-[2rem]"
         style={{ width: "calc(100vw - 2rem)" }}

@@ -45,12 +45,11 @@ const DEFAULT_SETTINGS: CalendarSettings = {
   agendaModeGroupBy: "date",
 };
 
-// tipo da resposta da API /api/day-entries
 interface DayEntryApi {
   id: string;
-  date: string; // ISO date (sem hora ou com hora, mas usamos só a parte de data)
-  startTime?: string | null; // "HH:mm"
-  endTime?: string | null; // "HH:mm"
+  date: string;
+  startTime?: string | null;
+  endTime?: string | null;
   description: string;
   color?: string;
 }
@@ -167,7 +166,7 @@ export function CalendarProvider({
   };
 
   const fetchEntries = async (year: number, month: number): Promise<IEvent[] | null> => {
-    const res = await fetch(`/api/day-entries?ano=${year}&mes=${month}`);
+    const res = await fetch(`/api/day-entries?ano=${year}`);
     if (!res.ok) return null;
     const data = (await res.json()) as DayEntryApi[];
     return Array.isArray(data) ? data.map(dayEntryToEvent) : null;
@@ -283,8 +282,7 @@ export function CalendarProvider({
       setAllEvents(refreshed);
       setFilteredEvents(refreshed);
     })();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [monthKey]);
+  }, [selectedDate.getFullYear()]);
 
   const clearFilter = () => {
     setFilteredEvents(allEvents);

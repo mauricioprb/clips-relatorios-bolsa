@@ -4,15 +4,29 @@ import {
   createSessionToken,
   sessionCookieOptions,
 } from "@/lib/auth";
+import { prisma } from "@/lib/prisma";
+import { verifyPassword } from "@/lib/password";
 
 export async function POST(req: NextRequest) {
-  const { username, password } = await req.json();
+  const { email, password } = await req.json();
 
-  if (
-    username === process.env.ADMIN_USERNAME &&
-    password === process.env.ADMIN_PASSWORD
-  ) {
-    const token = await createSessionToken(username);
+  if (!email || !password) {
+    return NextResponse.json(
+      { message: "Email e senha são obrigatórios." },
+      { status: 400 }
+    );
+  }
+
+  const user = await prisma.user.findUnique({
+    where: { email },
+  });
+
+  if (user && (await verifyPassword(password, user.password))) {
+    const token = await createSessionToken({
+      id: user.id,
+      email: user.email,
+      name: user.name || undefined,
+    });
     const res = NextResponse.json({ message: "Autenticado" });
     res.cookies.set(SESSION_COOKIE, token, sessionCookieOptions);
     return res;

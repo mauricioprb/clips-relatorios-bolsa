@@ -38,7 +38,7 @@ export default async function Dashboard() {
           description={
             config ? `${config.bolsista} · ${config.orientador}` : "Cadastre em Configurações"
           }
-          href="/config"
+          href="/configuracoes"
         />
         <DashboardCard
           title="Grade semanal"

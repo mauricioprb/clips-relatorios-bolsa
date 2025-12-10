@@ -22,7 +22,6 @@ export function DroppableArea({
 		<div
 			className={`${className || ""} ${isDragging ? "drop-target" : ""}`}
 			onDragOver={(e) => {
-				// Prevent default to allow drop
 				e.preventDefault();
 				e.currentTarget.classList.add("bg-primary/10");
 			}}

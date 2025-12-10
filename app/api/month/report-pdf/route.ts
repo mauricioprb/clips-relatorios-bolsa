@@ -22,7 +22,6 @@ async function handler(req: NextRequest) {
   try {
     const pdfBuffer = await reportService.generatePdf(year, month);
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return new NextResponse(pdfBuffer as any, {
       status: 200,
       headers: {

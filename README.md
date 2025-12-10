@@ -33,7 +33,7 @@ A carga horária semanal da bolsa agora é definida na página **Configurações
    ```bash
    npm run dev
    ```
-5. Acesse `http://localhost:3000`, faça login com as credenciais das variáveis de ambiente e navegue até `/dashboard`.
+5. Acesse `http://localhost:3000`, faça login com as credenciais das variáveis de ambiente e navegue até `/painel`.
 
 ## Rodando com Docker e docker-compose
 
@@ -60,7 +60,7 @@ docker compose exec app npx prisma migrate deploy
 
 ## Fluxo
 
-1. Faça login em `/login`.
-2. Cadastre os dados do bolsista e a carga horária semanal da bolsa em `/config`.
+1. Faça login em `/entrar`.
+2. Cadastre os dados do bolsista e a carga horária semanal da bolsa em `/configuracoes`.
 3. Configure grade semanal em `/grade-semanal` e atividades padrão em `/atividades-padrao`.
 4. Use `/mes?ano=YYYY&mes=M` para registrar/editar atividades do mês, preencher dias vazios automaticamente e gerar o PDF do relatório.

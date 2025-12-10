@@ -18,36 +18,30 @@ export async function generateReportPdf(data: ReportData) {
     doc.on("error", (err: unknown) => reject(err));
 
     const logosHeight = drawLogos(doc);
-    doc.y = doc.page.margins.top + logosHeight + 24; // espaço extra abaixo dos logos
+    doc.y = doc.page.margins.top + logosHeight + 24;
 
     doc.font("Helvetica").fontSize(11);
 
-    // Bolsista
     doc.text("Bolsista: ", { continued: true });
     doc.font("Helvetica-Bold").text(`${data.config.bolsista}`);
     doc.font("Helvetica");
 
-    // Orientador
     doc.text("Orientador: ", { continued: true });
     doc.font("Helvetica-Bold").text(`${data.config.orientador}`);
     doc.font("Helvetica");
 
-    // Laboratório / Sala
     doc.text("Laboratório / Sala: ", { continued: true });
     doc.font("Helvetica-Bold").text(`${data.config.laboratorio}`);
     doc.font("Helvetica");
 
-    // Bolsa
     doc.text("Bolsa: ", { continued: true });
     doc.font("Helvetica-Bold").text(`${data.config.bolsa}`);
     doc.font("Helvetica");
 
-    // Carga horária semanal
     doc.text("Carga horária semanal: ", { continued: true });
     doc.font("Helvetica-Bold").text(formatHoursValue(data.config.weeklyWorkloadHours));
     doc.font("Helvetica");
 
-    // Mês/Ano
     doc.text("Mês/Ano: ", { continued: true });
     doc.font("Helvetica-Bold").text(`${String(data.month).padStart(2, "0")}/${data.year}`);
     doc.font("Helvetica");
@@ -65,7 +59,6 @@ function setPdfkitDataPath() {
   if (fs.existsSync(dataDir)) {
     const fontApi = (PDFDocument as unknown as { PDFFont?: unknown }).PDFFont;
     if (fontApi && typeof fontApi === "function") {
-      // pdfkit expõe PDFFont.dataPath
       (fontApi as { dataPath?: string }).dataPath = dataDir;
     }
   }
@@ -103,8 +96,8 @@ function drawTable(doc: PDFKit.PDFDocument, data: ReportData) {
   const totalWidth = columnWidths.reduce((sum, w) => sum + w, 0);
   let y = doc.y;
 
-  const padX = pad; // padding horizontal
-  const padY = 2; // padding vertical menor
+  const padX = pad;
+  const padY = 2;
   const headerHeight = 18;
 
   const drawHeader = () => {

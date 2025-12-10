@@ -11,6 +11,9 @@ export async function GET(req: NextRequest) {
     const year = Number(yearParam);
     const month = Number(monthParam);
     entries = await dayEntryService.listByMonth(year, month);
+  } else if (yearParam) {
+    const year = Number(yearParam);
+    entries = await dayEntryService.listByYear(year);
   } else {
     entries = await dayEntryService.listAll();
   }

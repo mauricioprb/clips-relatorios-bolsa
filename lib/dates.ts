@@ -49,6 +49,6 @@ export function getMonthDays(year: number, month: number) {
 export function getWorkingDays(year: number, month: number) {
   return getMonthDays(year, month).filter((day) => {
     const weekday = day.getUTCDay();
-    return weekday !== 0 && weekday !== 6; // 0 domingo, 6 sábado
+    return weekday !== 0 && weekday !== 6;
   });
 }
