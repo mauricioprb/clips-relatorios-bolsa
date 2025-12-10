@@ -31,12 +31,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  COLORS,
-  PRIORITY_COLORS,
-  PRIORITY_LABELS,
-  BG_COLORS,
-} from "@/components/calendar/constants";
+import { PRIORITY_COLORS, PRIORITY_LABELS, BG_COLORS } from "@/components/calendar/constants";
 import { useCalendar } from "@/components/calendar/contexts/calendar-context";
 import { useDisclosure } from "@/components/calendar/hooks";
 import type { IEvent } from "@/components/calendar/interfaces";

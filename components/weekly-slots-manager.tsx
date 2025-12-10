@@ -8,12 +8,7 @@ import { Plus, Pencil, Trash2, Clock } from "lucide-react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Dialog,
   DialogContent,
@@ -78,11 +73,7 @@ const formSchema = z.object({
   description: z.string().min(1, "Descrição é obrigatória"),
 });
 
-export function WeeklySlotsManager({
-  initialSlots,
-}: {
-  initialSlots: WeeklySlot[];
-}) {
+export function WeeklySlotsManager({ initialSlots }: { initialSlots: WeeklySlot[] }) {
   const [slots, setSlots] = useState<WeeklySlot[]>(initialSlots);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingSlot, setEditingSlot] = useState<WeeklySlot | null>(null);
@@ -106,9 +97,7 @@ export function WeeklySlotsManager({
         description: values.description,
       };
 
-      const url = editingSlot
-        ? `/api/weekly-slots/${editingSlot.id}`
-        : "/api/weekly-slots";
+      const url = editingSlot ? `/api/weekly-slots/${editingSlot.id}` : "/api/weekly-slots";
       const method = editingSlot ? "PUT" : "POST";
 
       const res = await fetch(url, {
@@ -128,9 +117,7 @@ export function WeeklySlotsManager({
         return [...prev, saved];
       });
 
-      toast.success(
-        editingSlot ? "Horário atualizado!" : "Horário criado com sucesso!"
-      );
+      toast.success(editingSlot ? "Horário atualizado!" : "Horário criado com sucesso!");
       setIsDialogOpen(false);
       setEditingSlot(null);
       form.reset();
@@ -173,7 +160,6 @@ export function WeeklySlotsManager({
     setIsDialogOpen(true);
   };
 
-  // Group slots by weekday
   const slotsByDay = weekDays.map((day, index) => ({
     dayName: day,
     dayIndex: index,
@@ -201,7 +187,7 @@ export function WeeklySlotsManager({
             key={dayIndex}
             className={cn(
               "group relative flex flex-col",
-              slots.length === 0 && "border-dashed bg-muted/20"
+              slots.length === 0 && "border-dashed bg-muted/20",
             )}
           >
             <CardHeader className="pb-3">
@@ -251,9 +237,7 @@ export function WeeklySlotsManager({
                         </span>
                       </div>
                     </div>
-                    <div className="text-muted-foreground line-clamp-2">
-                      {slot.description}
-                    </div>
+                    <div className="text-muted-foreground line-clamp-2">{slot.description}</div>
                     <div className="flex items-center justify-end gap-2 pt-2 opacity-0 transition-opacity group-hover:opacity-100">
                       <Button
                         variant="ghost"
@@ -303,12 +287,8 @@ export function WeeklySlotsManager({
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>
-              {editingSlot ? "Editar Horário" : "Novo Horário"}
-            </DialogTitle>
-            <DialogDescription>
-              Configure o dia e hora do atendimento recorrente.
-            </DialogDescription>
+            <DialogTitle>{editingSlot ? "Editar Horário" : "Novo Horário"}</DialogTitle>
+            <DialogDescription>Configure o dia e hora do atendimento recorrente.</DialogDescription>
           </DialogHeader>
 
           <Form {...form}>
@@ -319,10 +299,7 @@ export function WeeklySlotsManager({
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Dia da Semana</FormLabel>
-                    <Select
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                    >
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
                       <FormControl>
                         <SelectTrigger>
                           <SelectValue placeholder="Selecione o dia" />

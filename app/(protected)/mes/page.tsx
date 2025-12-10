@@ -3,6 +3,7 @@ export const dynamic = "force-dynamic";
 import { Suspense } from "react";
 import { Calendar } from "@/components/calendar/calendar";
 import { CalendarSkeleton } from "@/components/calendar/skeletons/calendar-skeleton";
+import { PageHeader } from "@/components/page-header";
 
 type Props = {
   searchParams: Promise<{ ano?: string; mes?: string }>;
@@ -17,11 +18,11 @@ export default async function MesPage({ searchParams }: Props) {
   return (
     <div className="space-y-4">
       <div>
-        <h1 className="text-2xl font-semibold text-slate-900">Atividades do mês</h1>
-        <p className="text-slate-600">
-          Consulte, edite e preencha automaticamente os dias de {month.toString().padStart(2, "0")}/
-          {year}.
-        </p>
+        <PageHeader
+          kicker="Mês"
+          title="Atividades do mês"
+          description={`Consulte, edite e preencha automaticamente os dias de ${month.toString().padStart(2, "0")}/${year}.`}
+        />
       </div>
       <Suspense fallback={<CalendarSkeleton />}>
         <Calendar year={year} month={month} />

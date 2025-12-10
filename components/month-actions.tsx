@@ -47,7 +47,7 @@ export function MonthActions({ year, month, onAfterFill }: Props) {
 
   return (
     <div className="flex flex-wrap items-center gap-2">
-      <button onClick={fillBlanks} className="btn-secondary" disabled={loadingFill}>
+      <button onClick={fillBlanks} className="btn-primary" disabled={loadingFill}>
         {loadingFill ? "Preenchendo..." : "Completar dias"}
       </button>
       <button onClick={generatePdf} className="btn-primary" disabled={loadingPdf}>

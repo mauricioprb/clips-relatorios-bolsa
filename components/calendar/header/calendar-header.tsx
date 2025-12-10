@@ -79,22 +79,12 @@ export function CalendarHeader() {
       </div>
 
       <div className="flex flex-col gap-4 px-4 pb-4 md:flex-row md:items-center md:justify-between md:gap-0">
-        <div className="flex flex-col gap-2 md:flex-row md:items-center md:gap-2">
-          <Button
-            variant="outline"
-            onClick={fillBlanks}
-            disabled={loadingFill}
-            className="w-full md:w-auto"
-          >
+        <div className="flex flex-col gap-2 md:flex-row md:items-center md:gap-4">
+          <Button onClick={fillBlanks} disabled={loadingFill} className="w-full md:w-auto">
             <CalendarCheck className="mr-2 h-4 w-4" />
             {loadingFill ? "Preenchendo..." : "Completar dias"}
           </Button>
-          <Button
-            variant="outline"
-            onClick={generatePdf}
-            disabled={loadingPdf}
-            className="w-full md:w-auto"
-          >
+          <Button onClick={generatePdf} disabled={loadingPdf} className="w-full md:w-auto">
             <FileText className="mr-2 h-4 w-4" />
             {loadingPdf ? "Gerando PDF..." : "Gerar PDF do relatório"}
           </Button>
