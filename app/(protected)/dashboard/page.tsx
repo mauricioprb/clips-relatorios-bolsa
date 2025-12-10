@@ -18,7 +18,7 @@ export default async function Dashboard() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <p className="text-sm uppercase tracking-wide text-slate-500">Ciclaro</p>
+          <p className="text-sm uppercase tracking-wide text-slate-500">BagUnça</p>
           <h1 className="text-2xl font-semibold text-slate-900">
             Olá, {config?.bolsista || "bolsista"}!
           </h1>

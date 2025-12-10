@@ -6,8 +6,9 @@ import { useTheme } from "next-themes";
 import { motion } from "framer-motion";
 
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
-export function ModeToggle() {
+export function ModeToggle({ iconClassName }: { iconClassName?: string }) {
   const { resolvedTheme, setTheme } = useTheme();
   const [mounted, setMounted] = React.useState(false);
 
@@ -47,7 +48,7 @@ export function ModeToggle() {
   if (!mounted) {
     return (
       <Button variant="ghost" size="icon" className="rounded-full text-muted-foreground">
-        <div className="h-[1.2rem] w-[1.2rem]" />
+        <div className={cn("h-[1.2rem] w-[1.2rem]", iconClassName)} />
       </Button>
     );
   }
@@ -71,7 +72,7 @@ export function ModeToggle() {
         transition={{ type: "spring", stiffness: 260, damping: 20 }}
         className="absolute"
       >
-        <Moon className="h-[1.2rem] w-[1.2rem]" />
+        <Moon className={cn("h-[1.2rem] w-[1.2rem]", iconClassName)} />
       </motion.div>
       <motion.div
         initial={false}
@@ -82,7 +83,7 @@ export function ModeToggle() {
         }}
         transition={{ type: "spring", stiffness: 260, damping: 20 }}
       >
-        <Sun className="h-[1.2rem] w-[1.2rem]" />
+        <Sun className={cn("h-[1.2rem] w-[1.2rem]", iconClassName)} />
       </motion.div>
       <span className="sr-only">Alternar tema</span>
     </Button>

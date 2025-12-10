@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { getWorkingDays } from "@/lib/dates";
+import { formatHoursValue } from "@/lib/formatters";
 
 export type DayEntryClient = {
   id: string;
@@ -164,7 +165,7 @@ export function MonthEntriesClient({
           {loadingPdf ? "Gerando PDF..." : "Gerar PDF do relatório"}
         </button>
         <span className="ml-auto text-sm font-semibold text-slate-800">
-          Total do mês: {monthTotal.toFixed(2)} h
+          Total do mês: {formatHoursValue(monthTotal)}
         </span>
       </div>
 
@@ -208,7 +209,7 @@ export function MonthEntriesClient({
                               <p className="text-sm font-medium text-slate-900">
                                 {entry.description}
                               </p>
-                              <p className="text-xs text-slate-600">{entry.hours.toFixed(2)} h</p>
+                              <p className="text-xs text-slate-600">{formatHoursValue(entry.hours)}</p>
                             </div>
                             <div className="flex flex-col items-end gap-1 text-xs">
                               <button
@@ -232,7 +233,7 @@ export function MonthEntriesClient({
                       </button>
                     </div>
                   </td>
-                  <td className="p-2 font-semibold text-slate-800">{dailyHours.toFixed(2)} h</td>
+                  <td className="p-2 font-semibold text-slate-800">{formatHoursValue(dailyHours)}</td>
                   <td className="p-2 text-right">
                     {form.day === dayNumber && (
                       <form

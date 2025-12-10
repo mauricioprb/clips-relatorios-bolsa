@@ -2,7 +2,7 @@ import { SignJWT, jwtVerify } from "jose";
 import type { JWTPayload } from "jose";
 import { cookies, headers } from "next/headers";
 
-export const SESSION_COOKIE = "ciclaro_session";
+export const SESSION_COOKIE = "bagunca_session";
 
 type SessionPayload = JWTPayload & {
   username?: string;
@@ -12,7 +12,7 @@ const getSecretKey = () => {
   const secret = process.env.SESSION_SECRET;
   if (!secret) {
     throw new Error(
-      "SESSION_SECRET não configurado. Defina a variável de ambiente para habilitar autenticação."
+      "SESSION_SECRET não configurado. Defina a variável de ambiente para habilitar autenticação.",
     );
   }
   return new TextEncoder().encode(secret);
@@ -35,7 +35,7 @@ export async function createSessionToken(username: string) {
 }
 
 export async function verifySessionToken(
-  token: string | undefined | null
+  token: string | undefined | null,
 ): Promise<SessionPayload | null> {
   if (!token) return null;
   try {
