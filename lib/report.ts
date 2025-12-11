@@ -1,7 +1,7 @@
 import { prisma } from "./prisma";
 import { getWorkingDays, getMonthRange } from "./dates";
 import { formatInterval } from "./formatters";
-import { getHoliday } from "./holidays";
+import { parseAndExpandCustomHolidays, getHoliday } from "./holidays";
 
 export type ReportDay = {
   date: Date;
