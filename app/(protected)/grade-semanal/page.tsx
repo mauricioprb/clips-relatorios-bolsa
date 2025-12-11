@@ -25,7 +25,7 @@ export default async function GradeSemanalPage() {
       description: slot.description,
       startDate: slot.startDate,
       endDate: slot.endDate,
-    })
+    }),
   );
 
   return <WeeklySlotsManager initialSlots={serialized} />;
