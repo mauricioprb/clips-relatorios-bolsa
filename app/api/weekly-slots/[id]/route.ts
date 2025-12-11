@@ -7,7 +7,7 @@ type Params = {
 
 export async function PUT(req: NextRequest, { params }: Params) {
   const { id } = await params;
-  const { weekday, startTime, endTime, description } = await req.json();
+  const { weekday, startTime, endTime, description, startDate, endDate } = await req.json();
   const weekdayNumber = Number(weekday);
 
   if (!id) {
@@ -19,6 +19,8 @@ export async function PUT(req: NextRequest, { params }: Params) {
     startTime,
     endTime,
     description,
+    startDate,
+    endDate,
   });
 
   return NextResponse.json(updated);

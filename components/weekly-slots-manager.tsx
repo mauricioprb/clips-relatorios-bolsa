@@ -4,8 +4,11 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { Plus, Pencil, Trash2, Clock } from "lucide-react";
+import { Plus, Pencil, Trash2, Clock, CalendarIcon } from "lucide-react";
 import { toast } from "sonner";
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
+import { DateRange } from "react-day-picker";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -47,6 +50,8 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { PageHeader } from "@/components/page-header";
 import { cn } from "@/lib/utils";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Calendar } from "@/components/ui/calendar";
 
 export type WeeklySlot = {
   id: string;
@@ -54,6 +59,8 @@ export type WeeklySlot = {
   startTime: string;
   endTime: string;
   description: string;
+  startDate?: string | null;
+  endDate?: string | null;
 };
 
 const weekDays = [
@@ -71,6 +78,12 @@ const formSchema = z.object({
   startTime: z.string().min(1, "Horário inicial é obrigatório"),
   endTime: z.string().min(1, "Horário final é obrigatório"),
   description: z.string().min(1, "Descrição é obrigatória"),
+  dateRange: z
+    .object({
+      from: z.date().optional(),
+      to: z.date().optional(),
+    })
+    .optional(),
 });
 
 export function WeeklySlotsManager({ initialSlots }: { initialSlots: WeeklySlot[] }) {
@@ -85,6 +98,10 @@ export function WeeklySlotsManager({ initialSlots }: { initialSlots: WeeklySlot[
       startTime: "08:00",
       endTime: "12:00",
       description: "",
+      dateRange: {
+        from: undefined,
+        to: undefined,
+      },
     },
   });
 
@@ -95,6 +112,8 @@ export function WeeklySlotsManager({ initialSlots }: { initialSlots: WeeklySlot[
         startTime: values.startTime,
         endTime: values.endTime,
         description: values.description,
+        startDate: values.dateRange?.from ? format(values.dateRange.from, "yyyy-MM-dd") : null,
+        endDate: values.dateRange?.to ? format(values.dateRange.to, "yyyy-MM-dd") : null,
       };
 
       const url = editingSlot ? `/api/weekly-slots/${editingSlot.id}` : "/api/weekly-slots";
@@ -145,17 +164,31 @@ export function WeeklySlotsManager({ initialSlots }: { initialSlots: WeeklySlot[
       startTime: "08:00",
       endTime: "12:00",
       description: "",
+      dateRange: {
+        from: undefined,
+        to: undefined,
+      },
     });
     setIsDialogOpen(true);
   };
 
   const openEditDialog = (slot: WeeklySlot) => {
     setEditingSlot(slot);
+    const parseDate = (dateStr?: string | null) => {
+      if (!dateStr) return undefined;
+      const [y, m, d] = dateStr.split("-").map(Number);
+      return new Date(y, m - 1, d);
+    };
+
     form.reset({
       weekday: slot.weekday.toString(),
       startTime: slot.startTime,
       endTime: slot.endTime,
       description: slot.description,
+      dateRange: {
+        from: parseDate(slot.startDate),
+        to: parseDate(slot.endDate),
+      },
     });
     setIsDialogOpen(true);
   };
@@ -348,6 +381,54 @@ export function WeeklySlotsManager({ initialSlots }: { initialSlots: WeeklySlot[
                     <FormControl>
                       <Input placeholder="Ex: Aula de Estrutura da Matéria" {...field} />
                     </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="dateRange"
+                render={({ field }) => (
+                  <FormItem className="flex flex-col">
+                    <FormLabel>Intervalo de Data (Opcional)</FormLabel>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button
+                          id="date"
+                          variant={"outline"}
+                          className={cn(
+                            "w-full justify-start text-left font-normal",
+                            !field.value && "text-muted-foreground",
+                          )}
+                        >
+                          <CalendarIcon className="mr-2 h-4 w-4" />
+                          {field.value?.from ? (
+                            field.value.to ? (
+                              <>
+                                {format(field.value.from, "dd/MM/yyyy")} -{" "}
+                                {format(field.value.to, "dd/MM/yyyy")}
+                              </>
+                            ) : (
+                              format(field.value.from, "dd/MM/yyyy")
+                            )
+                          ) : (
+                            <span>Selecione um período</span>
+                          )}
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0" align="start">
+                        <Calendar
+                          initialFocus
+                          mode="range"
+                          defaultMonth={field.value?.from}
+                          selected={field.value}
+                          onSelect={field.onChange}
+                          numberOfMonths={2}
+                          locale={ptBR}
+                        />
+                      </PopoverContent>
+                    </Popover>
                     <FormMessage />
                   </FormItem>
                 )}

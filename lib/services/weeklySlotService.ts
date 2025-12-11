@@ -5,6 +5,8 @@ export type WeeklySlotInput = {
   startTime: string;
   endTime: string;
   description: string;
+  startDate?: string | null;
+  endDate?: string | null;
 };
 
 class WeeklySlotService {

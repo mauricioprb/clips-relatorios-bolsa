@@ -7,7 +7,7 @@ export async function GET() {
 }
 
 export async function POST(req: NextRequest) {
-  const { weekday, startTime, endTime, description } = await req.json();
+  const { weekday, startTime, endTime, description, startDate, endDate } = await req.json();
   const weekdayNumber = Number(weekday);
 
   if (
@@ -29,6 +29,8 @@ export async function POST(req: NextRequest) {
     startTime,
     endTime,
     description,
+    startDate,
+    endDate,
   });
 
   return NextResponse.json(slot);

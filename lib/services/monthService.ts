@@ -115,7 +115,13 @@ class MonthService {
       for (const day of week) {
         const key = toDayKey(day);
         const dayEntries = entriesByDay[key] ? [...entriesByDay[key]] : [];
-        const slotsForDay = weeklySlots.filter((slot) => slot.weekday === day.getUTCDay());
+        const slotsForDay = weeklySlots.filter((slot) => {
+          if (slot.weekday !== day.getUTCDay()) return false;
+          const dayStr = toDayKey(day);
+          if (slot.startDate && dayStr < slot.startDate) return false;
+          if (slot.endDate && dayStr > slot.endDate) return false;
+          return true;
+        });
 
         for (const slot of slotsForDay) {
           const hours = Math.max(calculateHours(slot.startTime, slot.endTime), 0);
