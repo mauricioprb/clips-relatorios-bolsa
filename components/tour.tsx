@@ -296,7 +296,6 @@ export function TourProvider({
               initial={{ opacity: 0, y: 10 }}
               animate={{
                 opacity: 1,
-                y: 0,
                 // Se elemento encontrado, usa posição calculada. Se não, centraliza na tela.
                 top: elementPosition
                   ? calculateContentPosition(elementPosition, steps[currentStep]?.position).top
