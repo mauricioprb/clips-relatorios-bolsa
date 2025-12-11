@@ -40,7 +40,7 @@ export const getEvents = async (year: number, month: number, user: IUser) => {
       color: (entry.color as any) || "azul",
       description: entry.description,
       user,
-    })
+    }),
   );
 };
 
