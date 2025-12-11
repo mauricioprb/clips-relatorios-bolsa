@@ -37,19 +37,26 @@ export function DateNavigator({ view, events }: IProps) {
     [events, selectedDate, view],
   );
 
-  const handlePrevious = () => setSelectedDate(navigateDate(selectedDate, view, "previous"));
-  const handleNext = () => setSelectedDate(navigateDate(selectedDate, view, "next"));
+  const handlePrevious = () => {
+    const newDate = navigateDate(selectedDate, view, "previous");
+    setSelectedDate(newDate);
+    updateUrl(newDate);
+  };
 
-  useEffect(() => {
-    const urlYear = Number(searchParams.get("ano"));
-    const urlMonth = Number(searchParams.get("mes"));
-    const currentMonth = selectedDate.getMonth() + 1;
-    const currentYear = selectedDate.getFullYear();
+  const handleNext = () => {
+    const newDate = navigateDate(selectedDate, view, "next");
+    setSelectedDate(newDate);
+    updateUrl(newDate);
+  };
 
-    if (urlYear !== currentYear || urlMonth !== currentMonth) {
-      router.replace(`/mes?ano=${currentYear}&mes=${currentMonth}`);
-    }
-  }, [router, searchParams, selectedDate]);
+  const updateUrl = (date: Date) => {
+    const currentMonth = date.getMonth() + 1;
+    const currentYear = date.getFullYear();
+    router.replace(`/mes?ano=${currentYear}&mes=${currentMonth}`);
+  };
+
+  // Removed useEffect that caused infinite loop by syncing state -> URL automatically
+  // URL updates are now triggered only by user interaction
 
   return (
     <div className="space-y-0.5">
