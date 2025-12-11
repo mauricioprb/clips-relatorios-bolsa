@@ -31,7 +31,10 @@ export async function POST(req: NextRequest) {
       parsedWeeklyHours <= 0
     ) {
       return NextResponse.json(
-        { message: "Todos os campos do perfil são obrigatórios e a carga horária deve ser maior que zero." },
+        {
+          message:
+            "Todos os campos do perfil são obrigatórios e a carga horária deve ser maior que zero.",
+        },
         { status: 400 },
       );
     }

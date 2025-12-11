@@ -422,7 +422,7 @@ export function WeeklySlotsManager({ initialSlots }: { initialSlots: WeeklySlot[
                           initialFocus
                           mode="range"
                           defaultMonth={field.value?.from}
-                          selected={field.value}
+                          selected={field.value as DateRange | undefined}
                           onSelect={field.onChange}
                           numberOfMonths={2}
                           locale={ptBR}

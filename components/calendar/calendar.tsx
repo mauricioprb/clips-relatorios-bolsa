@@ -50,7 +50,11 @@ export async function Calendar({ year, month }: Props) {
   const targetMonth = month || today.getMonth() + 1;
   const initialDate = new Date(targetYear, targetMonth - 1, 1);
 
-  const { events, users, customHolidays } = await getCalendarData(targetYear, targetMonth, session.id);
+  const { events, users, customHolidays } = await getCalendarData(
+    targetYear,
+    targetMonth,
+    session.id,
+  );
 
   return (
     <CalendarProvider

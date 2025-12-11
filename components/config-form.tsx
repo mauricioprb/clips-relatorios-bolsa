@@ -59,7 +59,7 @@ function ProfileForm({ initialData }: { initialData: any }) {
         : initialData.laboratorios.map((l: any) => l.value)
       : [];
 
-  const form = useForm<ProfileData>({
+  const form = useForm({
     resolver: zodResolver(profileSchema),
     defaultValues: {
       email: initialData?.email || "",
