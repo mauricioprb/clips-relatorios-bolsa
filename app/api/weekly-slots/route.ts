@@ -20,7 +20,7 @@ export async function POST(req: NextRequest) {
   ) {
     return NextResponse.json(
       { message: "Dados inválidos para criar o horário semanal." },
-      { status: 400 }
+      { status: 400 },
     );
   }
 

@@ -1,6 +1,7 @@
 import { prisma } from "./prisma";
 import { getWorkingDays, getMonthRange } from "./dates";
 import { formatInterval } from "./formatters";
+import { getHoliday } from "./holidays";
 
 export type ReportDay = {
   date: Date;
@@ -58,9 +59,11 @@ export async function fetchReportData(year: number, month: number, userId: strin
     return acc;
   }, {});
 
-  const days = getWorkingDays(year, month).map((day) => {
-    const key = toDayKey(day);
-    const dayEntries = entriesByDay[key] || [];
+  const days = getWorkingDays(year, month)
+    .filter((day) => !getHoliday(toDayKey(day)))
+    .map((day) => {
+      const key = toDayKey(day);
+      const dayEntries = entriesByDay[key] || [];
     const scheduleText =
       dayEntries.length > 0
         ? dayEntries.map((entry) => formatInterval(entry.startTime, entry.endTime)).join(" | ")

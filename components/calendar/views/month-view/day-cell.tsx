@@ -6,6 +6,7 @@ import { motion } from "framer-motion";
 import { useMemo, useCallback } from "react";
 
 import { cn } from "@/lib/utils";
+import { getHoliday } from "@/lib/holidays";
 import { EventListDialog } from "@/components/calendar/dialogs/events-list-dialog";
 import { DroppableArea } from "@/components/calendar/dnd/droppable-area";
 import { getMonthCellEvents } from "@/components/calendar/helpers";
@@ -45,6 +46,7 @@ const MAX_VISIBLE_EVENTS = 3;
 export function DayCell({ cell, events, eventPositions }: IProps) {
   const { day, currentMonth, date } = cell;
   const isMobile = useMediaQuery("(max-width: 768px)");
+  const holiday = useMemo(() => getHoliday(date), [date]);
 
   // Memoize cellEvents and currentCellMonth for performance
   const { cellEvents, currentCellMonth } = useMemo(() => {
@@ -103,11 +105,15 @@ export function DayCell({ cell, events, eventPositions }: IProps) {
       >
         <DroppableArea date={date} className="w-full h-full py-2">
           <motion.span
+            title={holiday?.name}
             className={cn(
               "h-6 px-1 text-xs font-semibold lg:px-2",
               !currentMonth && "opacity-20",
               isToday(date) &&
                 "flex w-6 translate-x-1 items-center justify-center rounded-full bg-primary px-0 font-bold text-primary-foreground",
+              !isToday(date) &&
+                holiday &&
+                "flex w-6 translate-x-1 items-center justify-center rounded-full bg-red-100 text-red-600 px-0 font-bold dark:bg-red-900 dark:text-red-100",
             )}
           >
             {day}

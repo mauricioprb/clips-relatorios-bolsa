@@ -8,6 +8,7 @@ import {
   getWorkingDays,
   getMonthRange,
 } from "../dates";
+import { getHoliday } from "../holidays";
 import { prisma } from "../prisma";
 
 const AFTERNOON_START_TIME = process.env.REPORT_START_TIME || "14:00";
@@ -114,6 +115,10 @@ class MonthService {
     for (const week of workingWeeks) {
       for (const day of week) {
         const key = toDayKey(day);
+        if (getHoliday(key)) {
+          continue;
+        }
+
         const dayEntries = entriesByDay[key] ? [...entriesByDay[key]] : [];
         const slotsForDay = weeklySlots.filter((slot) => {
           if (slot.weekday !== day.getUTCDay()) return false;
@@ -170,6 +175,10 @@ class MonthService {
       for (let i = 0; i < week.length; i += 1) {
         const day = week[i];
         const key = toDayKey(day);
+        if (getHoliday(key)) {
+          continue;
+        }
+
         const dayEntries = entriesByDay[key] ? [...entriesByDay[key]] : [];
         const currentHours = sumHours(dayEntries);
         const neededForDay = Math.max(dailyTarget - currentHours, 0);
