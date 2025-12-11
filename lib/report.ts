@@ -45,14 +45,7 @@ export async function fetchReportData(year: number, month: number, userId: strin
         weeklyWorkloadHours: 0,
       };
 
-  let customHolidays = [];
-  try {
-    if (user?.customHolidays) {
-      customHolidays = JSON.parse(user.customHolidays);
-    }
-  } catch (e) {
-    console.error("Failed to parse custom holidays", e);
-  }
+  const customHolidays = parseAndExpandCustomHolidays(user?.customHolidays);
 
   const { start, end } = getMonthRange(year, month);
   const entries = await prisma.dayEntry.findMany({

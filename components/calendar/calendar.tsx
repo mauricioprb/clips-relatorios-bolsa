@@ -6,6 +6,7 @@ import { CalendarHeader } from "@/components/calendar/header/calendar-header";
 import { getEvents, getUsers } from "@/components/calendar/requests";
 import { cookies } from "next/headers";
 import { verifySessionToken, SESSION_COOKIE } from "@/lib/auth";
+import { parseAndExpandCustomHolidays } from "@/lib/holidays";
 
 import { prisma } from "@/lib/prisma";
 
@@ -19,14 +20,7 @@ async function getCalendarData(year: number, month: number, userId: string) {
     select: { customHolidays: true },
   });
 
-  let customHolidays = [];
-  try {
-    if (user?.customHolidays) {
-      customHolidays = JSON.parse(user.customHolidays);
-    }
-  } catch (e) {
-    console.error("Failed to parse custom holidays", e);
-  }
+  const customHolidays = parseAndExpandCustomHolidays(user?.customHolidays);
 
   return { events, users, customHolidays };
 }

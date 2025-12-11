@@ -6,6 +6,8 @@ export type Holiday = {
   scope: "nacional" | "estadual" | "municipal";
 };
 
+const YEARS_TO_PROJECT = 10;
+
 function getEasterDate(year: number): Date {
   const a = year % 19;
   const b = Math.floor(year / 100);
@@ -23,6 +25,45 @@ function getEasterDate(year: number): Date {
   const day = ((h + l - 7 * m + 114) % 31) + 1;
 
   return new Date(year, month - 1, day);
+}
+
+export function expandCustomHolidays(customHolidays: Holiday[]): Holiday[] {
+  if (!customHolidays || customHolidays.length === 0) return [];
+
+  const currentYear = new Date().getFullYear();
+  const expanded: Holiday[] = [];
+  const seenDates = new Set<string>();
+
+  for (const holiday of customHolidays) {
+    const [, month, day] = holiday.date.split("-");
+
+    for (let year = currentYear; year <= currentYear + YEARS_TO_PROJECT; year++) {
+      const projectedDate = `${year}-${month}-${day}`;
+
+      // Avoid duplicates
+      if (!seenDates.has(projectedDate)) {
+        seenDates.add(projectedDate);
+        expanded.push({
+          ...holiday,
+          date: projectedDate,
+        });
+      }
+    }
+  }
+
+  return expanded.sort((a, b) => a.date.localeCompare(b.date));
+}
+
+export function parseAndExpandCustomHolidays(jsonString: string | null | undefined): Holiday[] {
+  if (!jsonString) return [];
+
+  try {
+    const parsed = JSON.parse(jsonString) as Holiday[];
+    if (!Array.isArray(parsed)) return [];
+    return expandCustomHolidays(parsed);
+  } catch {
+    return [];
+  }
 }
 
 export function getHolidays(year: number, customHolidays: Holiday[] = []): Holiday[] {
@@ -56,7 +97,6 @@ export function getHolidays(year: number, customHolidays: Holiday[] = []): Holid
     { date: format(corpusChristi, "yyyy-MM-dd"), name: "Corpus Christi", scope: "municipal" },
   ];
 
-  // Filter custom holidays for the requested year
   const yearCustomHolidays = customHolidays.filter((h) => h.date.startsWith(`${year}-`));
 
   return [...fixedHolidays, ...variableHolidays, ...yearCustomHolidays].sort((a, b) =>

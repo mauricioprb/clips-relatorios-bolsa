@@ -8,7 +8,7 @@ import {
   getWorkingDays,
   getMonthRange,
 } from "../dates";
-import { getHoliday } from "../holidays";
+import { parseAndExpandCustomHolidays, getHoliday } from "../holidays";
 import { prisma } from "../prisma";
 
 const AFTERNOON_START_TIME = process.env.REPORT_START_TIME || "14:00";
@@ -82,14 +82,7 @@ class MonthService {
 
     const weeklyTarget = user.weeklyWorkloadHours || DEFAULT_WEEKLY_WORKLOAD;
 
-    let customHolidays = [];
-    try {
-      if (user.customHolidays) {
-        customHolidays = JSON.parse(user.customHolidays);
-      }
-    } catch (e) {
-      console.error("Failed to parse custom holidays", e);
-    }
+    const customHolidays = parseAndExpandCustomHolidays(user.customHolidays);
 
     const weeklySlots = await weeklySlotService.list();
     const defaults = await defaultActivityService.list();
