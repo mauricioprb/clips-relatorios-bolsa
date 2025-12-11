@@ -24,15 +24,24 @@ export const getEvents = async (year: number, month: number, user: IUser) => {
 
   if (entries.length === 0) return [];
 
-  return entries.map((entry) => ({
-    id: entry.id,
-    startDate: combineDateAndTime(entry.date, entry.startTime),
-    endDate: combineDateAndTime(entry.date, entry.endTime),
-    title: entry.description,
-    color: (entry.color as any) || "azul",
-    description: entry.description,
-    user,
-  }));
+  return entries.map(
+    (entry: {
+      id: string;
+      date: Date;
+      startTime: string;
+      endTime: string;
+      description: string;
+      color: string | null;
+    }) => ({
+      id: entry.id,
+      startDate: combineDateAndTime(entry.date, entry.startTime),
+      endDate: combineDateAndTime(entry.date, entry.endTime),
+      title: entry.description,
+      color: (entry.color as any) || "azul",
+      description: entry.description,
+      user,
+    })
+  );
 };
 
 export const getUsers = async (userId: string) => {
