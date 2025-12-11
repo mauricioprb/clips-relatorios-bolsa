@@ -10,18 +10,32 @@ services:
       - "5432:5432"
     volumes:
       - db-data:/var/lib/postgresql/data
+    networks:
+      - backend
 
   app:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}?schema=public
     depends_on:
       - db
     env_file:
       - .env
     environment:
       DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}?schema=public
+      DB_HOST: db
+      DB_PORT: 5432
     ports:
       - "3000:3000"
     restart: unless-stopped
+    networks:
+      - backend
 
 volumes:
   db-data:
+
+networks:
+  backend:
+    driver: bridge

@@ -16,7 +16,6 @@ FROM node:22-alpine AS runner
 WORKDIR /app
 ENV NODE_ENV=production
 
-# Install netcat for the wait script
 RUN apk add --no-cache netcat-openbsd
 
 COPY --from=builder /app/public ./public
@@ -28,7 +27,6 @@ COPY --from=builder /app/prisma.config.ts ./prisma.config.ts
 COPY start.sh ./start.sh
 RUN chmod +x start.sh
 
-# Garante fontes padrão do pdfkit disponíveis no bundle compilado
 RUN mkdir -p .next/server/app/api/month/report-pdf/data && \
     cp -r node_modules/pdfkit/js/data/* .next/server/app/api/month/report-pdf/data/ || true
 EXPOSE 3000
