@@ -35,11 +35,12 @@ export const getEvents = async (year: number, month: number, user: IUser) => {
   }));
 };
 
-export const getUsers = async () => {
-  const config = await prisma.config.findFirst();
+export const getUsers = async (userId: string) => {
+  if (!userId) return [];
+  const user = await prisma.user.findUnique({ where: { id: userId } });
   const mainUser: IUser = {
-    id: config?.id || "main-user",
-    name: config?.bolsista || "Bolsista",
+    id: user?.id || "main-user",
+    name: user?.name || "Bolsista",
     picturePath: null,
   };
 

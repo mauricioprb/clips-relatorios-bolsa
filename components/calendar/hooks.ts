@@ -18,15 +18,18 @@ export const useLocalStorage = <T>(
   key: string,
   initialValue: T,
 ): [T, (value: T | ((prev: T) => T)) => void] => {
-  const [storedValue, setStoredValue] = useState<T>(() => {
+  const [storedValue, setStoredValue] = useState<T>(initialValue);
+
+  useEffect(() => {
     try {
       const item = window.localStorage.getItem(key);
-      return item ? (JSON.parse(item) as T) : initialValue;
+      if (item) {
+        setStoredValue(JSON.parse(item));
+      }
     } catch (error) {
       console.warn(`Error reading localStorage key "${key}":`, error);
-      return initialValue;
     }
-  });
+  }, [key]);
 
   const setValue = (value: T | ((prev: T) => T)) => {
     try {

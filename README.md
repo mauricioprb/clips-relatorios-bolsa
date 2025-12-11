@@ -1,6 +1,4 @@
-# bagunca
-
-# BagUnça
+# Clips
 
 Sistema para gerenciamento de horas e geração de relatórios de bolsistas.
 Permite cadastrar dados do bolsista, grade semanal, atividades padrão, registrar atividades diárias, preencher dias vazios automaticamente e gerar o PDF do relatório.
@@ -10,7 +8,7 @@ Permite cadastrar dados do bolsista, grade semanal, atividades padrão, registra
 Crie um arquivo `.env` a partir de `.env.example`:
 
 - `DATABASE_URL` – string de conexão PostgreSQL.
-  - Em Docker: `postgresql://bagunca:senha-segura@db:5432/bagunca?schema=public`
+  - Em Docker: `postgresql://clips:senha-segura@db:5432/clips?schema=public`
   - Fora do Docker: troque o host para `localhost`.
 - `ADMIN_USERNAME` / `ADMIN_PASSWORD` – credenciais de login.
 - `SESSION_SECRET` – chave para assinar o JWT de sessão.

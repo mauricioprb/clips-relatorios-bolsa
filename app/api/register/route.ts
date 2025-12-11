@@ -29,7 +29,7 @@ export async function POST(req: NextRequest) {
         password: hashedPassword,
         name,
         orientador,
-        laboratorio,
+        laboratorios: laboratorio ? [laboratorio] : [],
         bolsa,
         weeklyWorkloadHours: Number(weeklyWorkloadHours) || 20,
       },

@@ -23,8 +23,7 @@ interface IProps {
 }
 
 export function CalendarDayView({ singleDayEvents, multiDayEvents }: IProps) {
-  const { selectedDate, setSelectedDate, users, use24HourFormat } =
-    useCalendar();
+  const { selectedDate, setSelectedDate, users, use24HourFormat } = useCalendar();
   const scrollAreaRef = useRef<HTMLDivElement>(null);
 
   const hours = Array.from({ length: 24 }, (_, i) => i);
@@ -38,8 +37,7 @@ export function CalendarDayView({ singleDayEvents, multiDayEvents }: IProps) {
       const scrollSpeed = 15;
 
       const scrollContainer =
-        scrollArea.querySelector("[data-radix-scroll-area-viewport]") ||
-        scrollArea;
+        scrollArea.querySelector("[data-radix-scroll-area-viewport]") || scrollArea;
 
       if (e.clientY < rect.top + 60) {
         scrollContainer.scrollTop -= scrollSpeed;
@@ -86,10 +84,7 @@ export function CalendarDayView({ singleDayEvents, multiDayEvents }: IProps) {
     <div className="flex">
       <div className="flex flex-1 flex-col">
         <div>
-          <DayViewMultiDayEventsRow
-            selectedDate={selectedDate}
-            multiDayEvents={multiDayEvents}
-          />
+          <DayViewMultiDayEventsRow selectedDate={selectedDate} multiDayEvents={multiDayEvents} />
 
           {/* Day header */}
           <div className="relative z-20 flex border-b">
@@ -127,11 +122,7 @@ export function CalendarDayView({ singleDayEvents, multiDayEvents }: IProps) {
             <div className="relative flex-1 border-l">
               <div className="relative">
                 {hours.map((hour, index) => (
-                  <div
-                    key={hour}
-                    className="relative"
-                    style={{ height: "96px" }}
-                  >
+                  <div key={hour} className="relative" style={{ height: "96px" }}>
                     {index !== 0 && (
                       <div className="pointer-events-none absolute inset-x-0 top-0 border-b"></div>
                     )}
@@ -140,12 +131,9 @@ export function CalendarDayView({ singleDayEvents, multiDayEvents }: IProps) {
                       date={selectedDate}
                       hour={hour}
                       minute={0}
-                      className="absolute inset-x-0 top-0 h-[48px]"
+                      className="absolute inset-x-0 top-0 h-12"
                     >
-                      <AddEditEventDialog
-                        startDate={selectedDate}
-                        startTime={{ hour, minute: 0 }}
-                      >
+                      <AddEditEventDialog startDate={selectedDate} startTime={{ hour, minute: 0 }}>
                         <div className="absolute inset-0 cursor-pointer transition-colors hover:bg-secondary" />
                       </AddEditEventDialog>
                     </DroppableArea>
@@ -156,22 +144,16 @@ export function CalendarDayView({ singleDayEvents, multiDayEvents }: IProps) {
                       date={selectedDate}
                       hour={hour}
                       minute={30}
-                      className="absolute inset-x-0 bottom-0 h-[48px]"
+                      className="absolute inset-x-0 bottom-0 h-12"
                     >
-                      <AddEditEventDialog
-                        startDate={selectedDate}
-                        startTime={{ hour, minute: 30 }}
-                      >
+                      <AddEditEventDialog startDate={selectedDate} startTime={{ hour, minute: 30 }}>
                         <div className="absolute inset-0 cursor-pointer transition-colors hover:bg-secondary" />
                       </AddEditEventDialog>
                     </DroppableArea>
                   </div>
                 ))}
 
-                <RenderGroupedEvents
-                  groupedEvents={groupedEvents}
-                  day={selectedDate}
-                />
+                <RenderGroupedEvents groupedEvents={groupedEvents} day={selectedDate} />
               </div>
 
               <CalendarTimeline />
@@ -196,9 +178,7 @@ export function CalendarDayView({ singleDayEvents, multiDayEvents }: IProps) {
                 <span className="relative inline-flex size-2.5 rounded-full bg-green-600" />
               </span>
 
-              <p className="text-sm font-semibold text-t-secondary">
-                Happening now
-              </p>
+              <p className="text-sm font-semibold text-t-secondary">Happening now</p>
             </div>
           ) : (
             <p className="p-4 text-center text-sm italic text-t-tertiary">
@@ -214,41 +194,27 @@ export function CalendarDayView({ singleDayEvents, multiDayEvents }: IProps) {
 
                   return (
                     <div key={event.id} className="space-y-1.5">
-                      <p className="line-clamp-2 text-sm font-semibold">
-                        {event.title}
-                      </p>
+                      <p className="line-clamp-2 text-sm font-semibold">{event.title}</p>
 
                       {user && (
                         <div className="flex items-center gap-1.5">
                           <User className="size-4 text-t-quinary" />
-                          <span className="text-sm text-t-tertiary">
-                            {user.name}
-                          </span>
+                          <span className="text-sm text-t-tertiary">{user.name}</span>
                         </div>
                       )}
 
                       <div className="flex items-center gap-1.5">
                         <Calendar className="size-4 text-t-quinary" />
                         <span className="text-sm text-t-tertiary">
-                          {format(
-                            new Date(event.startDate),
-                            "MMM d, yyyy",
-                          )}
+                          {format(new Date(event.startDate), "MMM d, yyyy")}
                         </span>
                       </div>
 
                       <div className="flex items-center gap-1.5">
                         <Clock className="size-4 text-t-quinary" />
                         <span className="text-sm text-t-tertiary">
-                          {format(
-                            parseISO(event.startDate),
-                            use24HourFormat ? "HH:mm" : "hh:mm a",
-                          )}{" "}
-                          -
-                          {format(
-                            parseISO(event.endDate),
-                            use24HourFormat ? "HH:mm" : "hh:mm a",
-                          )}
+                          {format(parseISO(event.startDate), use24HourFormat ? "HH:mm" : "hh:mm a")}{" "}
+                          -{format(parseISO(event.endDate), use24HourFormat ? "HH:mm" : "hh:mm a")}
                         </span>
                       </div>
                     </div>

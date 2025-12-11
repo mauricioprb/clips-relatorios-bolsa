@@ -2,7 +2,7 @@ import { SignJWT, jwtVerify } from "jose";
 import type { JWTPayload } from "jose";
 import { cookies, headers } from "next/headers";
 
-export const SESSION_COOKIE = "bagunca_session";
+export const SESSION_COOKIE = "clips_session";
 
 type SessionPayload = JWTPayload & {
   id?: string;

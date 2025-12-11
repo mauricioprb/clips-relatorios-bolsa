@@ -5,10 +5,21 @@ import { prisma } from "@/lib/prisma";
 import { Suspense } from "react";
 import { CalendarSkeleton } from "@/components/calendar/skeletons/calendar-skeleton";
 import { Calendar } from "@/components/calendar/calendar";
+import { cookies } from "next/headers";
+import { verifySessionToken, SESSION_COOKIE } from "@/lib/auth";
+import { redirect } from "next/navigation";
 
 export default async function Dashboard() {
-  const [config, weeklyCount, defaultsCount, entriesCount] = await Promise.all([
-    prisma.config.findFirst(),
+  const cookieStore = await cookies();
+  const token = cookieStore.get(SESSION_COOKIE)?.value;
+  const session = await verifySessionToken(token);
+
+  if (!session?.id) {
+    redirect("/entrar");
+  }
+
+  const [user, weeklyCount, defaultsCount, entriesCount] = await Promise.all([
+    prisma.user.findUnique({ where: { id: session.id } }),
     prisma.weeklySlot.count(),
     prisma.defaultActivity.count(),
     prisma.dayEntry.count(),
@@ -18,9 +29,9 @@ export default async function Dashboard() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <p className="text-sm uppercase tracking-wide text-slate-500">BagUnça</p>
+          <p className="text-sm uppercase tracking-wide text-slate-500">Clips</p>
           <h1 className="text-2xl font-semibold text-slate-900">
-            Olá, {config?.bolsista || "bolsista"}!
+            Olá, {user?.name || "bolsista"}!
           </h1>
           <p className="text-slate-600">
             Gerencie sua configuração e atividades para gerar o relatório mensal.
@@ -34,9 +45,9 @@ export default async function Dashboard() {
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         <DashboardCard
           title="Dados do bolsista"
-          value={config ? "Configurado" : "Pendente"}
+          value={user?.name ? "Configurado" : "Pendente"}
           description={
-            config ? `${config.bolsista} · ${config.orientador}` : "Cadastre em Configurações"
+            user?.name ? `${user.name} · ${user.orientador || ""}` : "Cadastre em Configurações"
           }
           href="/configuracoes"
         />

@@ -2,12 +2,12 @@ import { fetchReportData } from "../report";
 import { generateReportPdf } from "../pdf";
 
 class ReportService {
-  async buildReport(year: number, month: number) {
-    return fetchReportData(year, month);
+  async buildReport(year: number, month: number, userId: string) {
+    return fetchReportData(year, month, userId);
   }
 
-  async generatePdf(year: number, month: number) {
-    const data = await this.buildReport(year, month);
+  async generatePdf(year: number, month: number, userId: string) {
+    const data = await this.buildReport(year, month, userId);
     return generateReportPdf(data);
   }
 }

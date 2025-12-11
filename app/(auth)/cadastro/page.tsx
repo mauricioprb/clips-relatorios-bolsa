@@ -75,11 +75,11 @@ export default function RegisterPage() {
         <CardHeader className="space-y-1 text-center">
           <div className="flex justify-center mb-6">
             <Image
-              src="/logo_bagunca.svg"
+              src="/logo_clips.svg"
               alt="Logo"
               width={400}
               height={120}
-              className="h-auto w-auto max-h-16"
+              className="h-auto w-auto max-h-12"
               priority
             />
           </div>

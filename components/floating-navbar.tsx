@@ -4,16 +4,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import {
-  LayoutDashboard,
-  Settings,
-  CalendarDays,
-  ListChecks,
-  Calendar,
-  LogOut,
-  Menu,
-  X,
-} from "lucide-react";
+import { Settings, CalendarDays, ListChecks, Calendar, LogOut, Menu, X } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -53,19 +44,19 @@ export function FloatingNavbar() {
       <nav className="hidden md:flex items-center gap-1 rounded-full border border-border bg-background/80 p-2 shadow-lg backdrop-blur-md">
         <div className="pl-4 pr-2">
           <Image
-            src="/logo_bagunca_light.svg"
-            alt="BagUnça Logo"
+            src="/logo_clips_light.svg"
+            alt="Clips Logo"
             width={100}
             height={32}
-            className="h-8 w-auto dark:hidden"
+            className="h-6 w-auto dark:hidden"
             priority
           />
           <Image
-            src="/logo_bagunca.svg"
-            alt="BagUnça Logo"
+            src="/logo_clips.svg"
+            alt="Clips Logo"
             width={100}
             height={32}
-            className="h-8 w-auto hidden dark:block"
+            className="h-6 w-auto hidden dark:block"
             priority
           />
         </div>
@@ -124,14 +115,14 @@ export function FloatingNavbar() {
       </nav>
 
       <nav
-        className="md:hidden mx-4 border border-border bg-background/80 shadow-lg backdrop-blur-md overflow-hidden rounded-[2rem]"
+        className="md:hidden mx-4 border border-border bg-background/80 shadow-lg backdrop-blur-md overflow-hidden rounded-4xl"
         style={{ width: "calc(100vw - 2rem)" }}
       >
         <div className="grid grid-cols-3 items-center p-2 px-4">
           <div className="flex items-center justify-start">
             <Image
               src="/logo_clip.svg"
-              alt="BagUnça Logo"
+              alt="Clips Logo"
               width={32}
               height={32}
               className="h-8 w-auto"

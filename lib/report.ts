@@ -16,7 +16,7 @@ export type ReportData = {
   config: {
     bolsista: string;
     orientador: string;
-    laboratorio: string;
+    laboratorios: string[];
     bolsa: string;
     weeklyWorkloadHours: number;
   };
@@ -26,15 +26,23 @@ export type ReportData = {
 
 const toDayKey = (date: Date) => date.toISOString().substring(0, 10);
 
-export async function fetchReportData(year: number, month: number) {
-  const config = await prisma.config.findFirst();
-  const configData = config || {
-    bolsista: "Não informado",
-    orientador: "Não informado",
-    laboratorio: "Não informado",
-    bolsa: "Não informada",
-    weeklyWorkloadHours: 0,
-  };
+export async function fetchReportData(year: number, month: number, userId: string) {
+  const user = await prisma.user.findUnique({ where: { id: userId } });
+  const configData = user
+    ? {
+        bolsista: user.name || "Não informado",
+        orientador: user.orientador || "Não informado",
+        laboratorios: user.laboratorios.length > 0 ? user.laboratorios : ["Não informado"],
+        bolsa: user.bolsa || "Não informada",
+        weeklyWorkloadHours: user.weeklyWorkloadHours || 0,
+      }
+    : {
+        bolsista: "Não informado",
+        orientador: "Não informado",
+        laboratorios: ["Não informado"],
+        bolsa: "Não informada",
+        weeklyWorkloadHours: 0,
+      };
 
   const { start, end } = getMonthRange(year, month);
   const entries = await prisma.dayEntry.findMany({
@@ -78,7 +86,7 @@ export async function fetchReportData(year: number, month: number) {
     config: {
       bolsista: configData.bolsista,
       orientador: configData.orientador,
-      laboratorio: configData.laboratorio,
+      laboratorios: configData.laboratorios,
       bolsa: configData.bolsa,
       weeklyWorkloadHours: configData.weeklyWorkloadHours ?? 0,
     },

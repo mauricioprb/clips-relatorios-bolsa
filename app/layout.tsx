@@ -23,7 +23,7 @@ const mono = IBM_Plex_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "BagUnça | Relatórios de bolsista",
+  title: "Clips | Relatórios de bolsista",
   description: "Sistema web para controle e geração automática de relatórios mensais de bolsista.",
 };
 

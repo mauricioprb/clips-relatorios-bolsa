@@ -33,7 +33,7 @@ export function TopBar() {
     <header className="sticky top-0 z-20 border-b border-slate-200 bg-white/90 backdrop-blur">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
         <Link href="/painel" className="text-lg font-semibold text-blue-800">
-          BagUnça
+          Clips
         </Link>
         <nav className="flex items-center gap-4 text-sm font-medium">
           {links.map((link) => (

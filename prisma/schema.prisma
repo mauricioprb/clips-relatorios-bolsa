@@ -7,17 +7,6 @@ datasource db {
   provider = "postgresql"
 }
 
-model Config {
-  id          String   @id @default(uuid())
-  bolsista    String
-  orientador  String
-  laboratorio String
-  bolsa       String
-  weeklyWorkloadHours Float   @default(20)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-}
-
 model WeeklySlot {
   id          String   @id @default(uuid())
   weekday     Int
@@ -58,7 +47,7 @@ model User {
   
   // Configurações do perfil
   orientador          String?
-  laboratorio         String?
+  laboratorios        String[]
   bolsa               String?
   weeklyWorkloadHours Float   @default(20)
 

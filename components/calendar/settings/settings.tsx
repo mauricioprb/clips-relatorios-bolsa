@@ -81,10 +81,7 @@ export function Settings() {
           <DropdownMenuItem>
             Use 24 hour format
             <DropdownMenuShortcut>
-              <Switch
-                checked={use24HourFormat}
-                onCheckedChange={toggleTimeFormat}
-              />
+              <Switch checked={use24HourFormat} onCheckedChange={toggleTimeFormat} />
             </DropdownMenuShortcut>
           </DropdownMenuItem>
         </DropdownMenuGroup>

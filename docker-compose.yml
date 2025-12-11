@@ -3,9 +3,9 @@ services:
     image: postgres:16
     restart: unless-stopped
     environment:
-      POSTGRES_USER: bagunca
+      POSTGRES_USER: clips
       POSTGRES_PASSWORD: senha-segura
-      POSTGRES_DB: bagunca
+      POSTGRES_DB: clips
     ports:
       - "5432:5432"
     volumes:
@@ -18,7 +18,7 @@ services:
     env_file:
       - .env
     environment:
-      DATABASE_URL: ${DATABASE_URL:-postgresql://bagunca:senha-segura@db:5432/bagunca?schema=public}
+      DATABASE_URL: ${DATABASE_URL:-postgresql://clips:senha-segura@db:5432/clips?schema=public}
     ports:
       - "3000:3000"
     restart: unless-stopped

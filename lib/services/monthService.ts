@@ -71,15 +71,15 @@ const buildPriorityQueue = (defaults: DefaultActivity[]) => {
 };
 
 class MonthService {
-  async fillBlanks(year: number, month: number) {
-    const config = await prisma.config.findFirst();
-    if (!config || !config.weeklyWorkloadHours || config.weeklyWorkloadHours <= 0) {
+  async fillBlanks(year: number, month: number, userId: string) {
+    const user = await prisma.user.findUnique({ where: { id: userId } });
+    if (!user || !user.weeklyWorkloadHours || user.weeklyWorkloadHours <= 0) {
       throw new Error(
         "Informe a carga horária semanal da bolsa na página de Configurações antes de preencher o mês.",
       );
     }
 
-    const weeklyTarget = config.weeklyWorkloadHours || DEFAULT_WEEKLY_WORKLOAD;
+    const weeklyTarget = user.weeklyWorkloadHours || DEFAULT_WEEKLY_WORKLOAD;
 
     const weeklySlots = await weeklySlotService.list();
     const defaults = await defaultActivityService.list();

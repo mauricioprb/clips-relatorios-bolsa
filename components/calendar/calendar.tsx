@@ -4,9 +4,11 @@ import { CalendarProvider } from "@/components/calendar/contexts/calendar-contex
 import { DndProvider } from "@/components/calendar/contexts/dnd-context";
 import { CalendarHeader } from "@/components/calendar/header/calendar-header";
 import { getEvents, getUsers } from "@/components/calendar/requests";
+import { cookies } from "next/headers";
+import { verifySessionToken, SESSION_COOKIE } from "@/lib/auth";
 
-async function getCalendarData(year: number, month: number) {
-  const users = await getUsers();
+async function getCalendarData(year: number, month: number, userId: string) {
+  const users = await getUsers(userId);
   const defaultUser = users[0];
   const events = await getEvents(year, month, defaultUser);
   return { events, users };
@@ -18,12 +20,20 @@ type Props = {
 };
 
 export async function Calendar({ year, month }: Props) {
+  const cookieStore = await cookies();
+  const token = cookieStore.get(SESSION_COOKIE)?.value;
+  const session = await verifySessionToken(token);
+
+  if (!session?.id) {
+    return null;
+  }
+
   const today = new Date();
   const targetYear = year || today.getFullYear();
   const targetMonth = month || today.getMonth() + 1;
   const initialDate = new Date(targetYear, targetMonth - 1, 1);
 
-  const { events, users } = await getCalendarData(targetYear, targetMonth);
+  const { events, users } = await getCalendarData(targetYear, targetMonth, session.id);
 
   return (
     <CalendarProvider events={events} users={users} view="month" initialDate={initialDate}>

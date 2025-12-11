@@ -18,17 +18,19 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { TagInput } from "@/components/ui/tag-input";
 import { Loader2 } from "lucide-react";
 
 const formSchema = z.object({
+  email: z.string().email().optional(),
   bolsista: z.string().min(2, {
     message: "Nome do bolsista deve ter pelo menos 2 caracteres.",
   }),
   orientador: z.string().min(2, {
     message: "Nome do orientador deve ter pelo menos 2 caracteres.",
   }),
-  laboratorio: z.string().min(2, {
-    message: "Nome do laboratório deve ter pelo menos 2 caracteres.",
+  laboratorios: z.array(z.string()).min(1, {
+    message: "Adicione pelo menos um laboratório.",
   }),
   bolsa: z.string().min(2, {
     message: "Nome da bolsa deve ter pelo menos 2 caracteres.",
@@ -40,17 +42,26 @@ const formSchema = z.object({
 
 export type ConfigData = z.infer<typeof formSchema>;
 
-export function ConfigForm({ initialData }: { initialData: ConfigData | null }) {
+export function ConfigForm({ initialData }: { initialData: any }) {
   const [isLoading, setIsLoading] = useState(false);
+
+  // Converte o formato antigo (se houver) ou usa o array de strings
+  const defaultLaboratorios =
+    initialData?.laboratorios && initialData.laboratorios.length > 0
+      ? typeof initialData.laboratorios[0] === "string"
+        ? initialData.laboratorios
+        : initialData.laboratorios.map((l: any) => l.value)
+      : [];
 
   const form = useForm({
     resolver: zodResolver(formSchema),
-    defaultValues: initialData || {
-      bolsista: "",
-      orientador: "",
-      laboratorio: "",
-      bolsa: "",
-      weeklyWorkloadHours: 20,
+    defaultValues: {
+      email: initialData?.email || "",
+      bolsista: initialData?.bolsista || "",
+      orientador: initialData?.orientador || "",
+      laboratorios: defaultLaboratorios,
+      bolsa: initialData?.bolsa || "",
+      weeklyWorkloadHours: initialData?.weeklyWorkloadHours || 20,
     },
   });
 
@@ -88,6 +99,19 @@ export function ConfigForm({ initialData }: { initialData: ConfigData | null }) 
             <div className="grid gap-4 md:grid-cols-2">
               <FormField
                 control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Email</FormLabel>
+                    <FormControl>
+                      <Input {...field} disabled />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
                 name="bolsista"
                 render={({ field }) => (
                   <FormItem>
@@ -112,19 +136,31 @@ export function ConfigForm({ initialData }: { initialData: ConfigData | null }) 
                   </FormItem>
                 )}
               />
+            </div>
+
+            <div className="space-y-4">
               <FormField
                 control={form.control}
-                name="laboratorio"
+                name="laboratorios"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Laboratório</FormLabel>
+                    <FormLabel>Laboratórios</FormLabel>
                     <FormControl>
-                      <Input placeholder="Ex: Lab. de Informática" {...field} />
+                      <TagInput
+                        {...field}
+                        placeholder="Digite e pressione Enter..."
+                      />
                     </FormControl>
+                    <FormDescription>
+                      Adicione um ou mais laboratórios. Pressione Enter ou vírgula para adicionar.
+                    </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
               />
+            </div>
+
+            <div className="grid gap-4 md:grid-cols-2">
               <FormField
                 control={form.control}
                 name="bolsa"
@@ -145,7 +181,11 @@ export function ConfigForm({ initialData }: { initialData: ConfigData | null }) 
                   <FormItem>
                     <FormLabel>Carga Horária Semanal (horas)</FormLabel>
                     <FormControl>
-                      <Input type="number" {...field} value={field.value as string | number | undefined} />
+                      <Input
+                        type="number"
+                        {...field}
+                        value={field.value as string | number | undefined}
+                      />
                     </FormControl>
                     <FormDescription>
                       Total de horas que devem ser cumpridas por semana.

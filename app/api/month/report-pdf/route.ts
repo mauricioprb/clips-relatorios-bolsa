@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { reportService } from "@/lib/services/reportService";
+import { cookies } from "next/headers";
+import { verifySessionToken, SESSION_COOKIE } from "@/lib/auth";
 
 async function getParams(req: NextRequest) {
   const { searchParams } = new URL(req.url);
@@ -11,6 +13,14 @@ async function getParams(req: NextRequest) {
 }
 
 async function handler(req: NextRequest) {
+  const cookieStore = await cookies();
+  const token = cookieStore.get(SESSION_COOKIE)?.value;
+  const session = await verifySessionToken(token);
+
+  if (!session?.id) {
+    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+  }
+
   const { year, month } = await getParams(req);
   if (!year || !month) {
     return NextResponse.json(
@@ -20,7 +30,7 @@ async function handler(req: NextRequest) {
   }
 
   try {
-    const pdfBuffer = await reportService.generatePdf(year, month);
+    const pdfBuffer = await reportService.generatePdf(year, month, session.id);
 
     return new NextResponse(pdfBuffer as any, {
       status: 200,

@@ -30,8 +30,8 @@ export async function generateReportPdf(data: ReportData) {
     doc.font("Helvetica-Bold").text(`${data.config.orientador}`);
     doc.font("Helvetica");
 
-    doc.text("Laboratório / Sala: ", { continued: true });
-    doc.font("Helvetica-Bold").text(`${data.config.laboratorio}`);
+    doc.text("Laboratório(s) / Sala(s): ", { continued: true });
+    doc.font("Helvetica-Bold").text(`${data.config.laboratorios.join(", ")}`);
     doc.font("Helvetica");
 
     doc.text("Bolsa: ", { continued: true });
