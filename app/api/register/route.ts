@@ -5,7 +5,7 @@ import { hashPassword } from "@/lib/password";
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { email, password, name, orientador, laboratorio, bolsa, weeklyWorkloadHours } = body;
+    const { email, password, name, orientador, laboratorios, bolsa, weeklyWorkloadHours } = body;
 
     if (!email || !password || !name) {
       return NextResponse.json({ message: "Campos obrigatórios faltando." }, { status: 400 });
@@ -29,7 +29,7 @@ export async function POST(req: NextRequest) {
         password: hashedPassword,
         name,
         orientador,
-        laboratorios: laboratorio ? [laboratorio] : [],
+        laboratorios: Array.isArray(laboratorios) ? laboratorios : [],
         bolsa,
         weeklyWorkloadHours: Number(weeklyWorkloadHours) || 20,
       },

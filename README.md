@@ -1,4 +1,4 @@
-# Clips
+<img src="./public/logo_clips.svg" alt="Tela inicial" width="150" /></br>
 
 Sistema para gerenciamento de horas e geração de relatórios de bolsistas.
 Permite cadastrar dados do bolsista, grade semanal, atividades padrão, registrar atividades diárias, preencher dias vazios automaticamente e gerar o PDF do relatório.

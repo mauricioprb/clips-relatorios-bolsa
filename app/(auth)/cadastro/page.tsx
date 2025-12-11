@@ -9,6 +9,7 @@ import { Loader2, UserPlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { TagInput } from "@/components/ui/tag-input";
 import {
   Card,
   CardContent,
@@ -25,7 +26,7 @@ export default function RegisterPage() {
     email: "",
     password: "",
     orientador: "",
-    laboratorio: "",
+    laboratorios: [] as string[],
     bolsa: "",
     weeklyWorkloadHours: "20",
   });
@@ -58,7 +59,7 @@ export default function RegisterPage() {
         const data = await res.json().catch(() => ({}));
         setError(data?.message || "Erro ao criar conta. Tente novamente.");
       }
-    } catch (err) {
+    } catch {
       setError("Ocorreu um erro ao tentar criar a conta.");
     } finally {
       setLoading(false);
@@ -67,19 +68,27 @@ export default function RegisterPage() {
 
   return (
     <div className="flex min-h-screen w-full items-center justify-center bg-muted/40 p-4 lg:p-8 relative overflow-hidden">
-      <div className="absolute inset-0 -z-10 h-full w-full bg-background bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:14px_24px]">
+      <div className="absolute inset-0 -z-10 h-full w-full bg-background bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-size-[14px_24px]">
         <div className="absolute left-0 right-0 top-0 -z-10 m-auto h-[310px] w-[310px] rounded-full bg-primary/20 opacity-20 blur-[100px]"></div>
       </div>
 
-      <Card className="w-full max-w-lg shadow-2xl border-border/50 bg-card/95 backdrop-blur-sm">
+      <Card className="w-full max-w-md shadow-md border-border/50 bg-card/95 backdrop-blur-sm">
         <CardHeader className="space-y-1 text-center">
           <div className="flex justify-center mb-6">
             <Image
-              src="/logo_clips.svg"
-              alt="Logo"
+              src="/logo_clips_light.svg"
+              alt="Logo Clips"
               width={400}
               height={120}
-              className="h-auto w-auto max-h-12"
+              className="h-auto w-auto max-h-12 dark:hidden"
+              priority
+            />
+            <Image
+              src="/logo_clips.svg"
+              alt="Logo Clips"
+              width={400}
+              height={120}
+              className="h-auto w-auto max-h-12 hidden dark:block"
               priority
             />
           </div>
@@ -98,6 +107,7 @@ export default function RegisterPage() {
                 onChange={handleChange}
                 required
                 disabled={loading}
+                className="bg-background/50"
               />
             </div>
 
@@ -112,6 +122,7 @@ export default function RegisterPage() {
                 onChange={handleChange}
                 required
                 disabled={loading}
+                className="bg-background/50"
               />
             </div>
 
@@ -126,32 +137,33 @@ export default function RegisterPage() {
                 onChange={handleChange}
                 required
                 disabled={loading}
+                className="bg-background/50"
               />
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="grid gap-3">
-                <Label htmlFor="orientador">Orientador</Label>
-                <Input
-                  id="orientador"
-                  name="orientador"
-                  placeholder="Nome do orientador"
-                  value={formData.orientador}
-                  onChange={handleChange}
-                  disabled={loading}
-                />
-              </div>
-              <div className="grid gap-3">
-                <Label htmlFor="laboratorio">Laboratório</Label>
-                <Input
-                  id="laboratorio"
-                  name="laboratorio"
-                  placeholder="Nome do laboratório"
-                  value={formData.laboratorio}
-                  onChange={handleChange}
-                  disabled={loading}
-                />
-              </div>
+            <div className="grid gap-3">
+              <Label htmlFor="orientador">Orientador</Label>
+              <Input
+                id="orientador"
+                name="orientador"
+                placeholder="Nome do orientador"
+                value={formData.orientador}
+                onChange={handleChange}
+                disabled={loading}
+                className="bg-background/50"
+              />
+            </div>
+
+            <div className="grid gap-3">
+              <Label htmlFor="laboratorios">Laboratórios</Label>
+              <TagInput
+                id="laboratorios"
+                placeholder="Digite e pressione Enter..."
+                value={formData.laboratorios}
+                onChange={(tags) => setFormData((prev) => ({ ...prev, laboratorios: tags }))}
+                disabled={loading}
+                className="bg-background/50"
+              />
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -164,6 +176,7 @@ export default function RegisterPage() {
                   value={formData.bolsa}
                   onChange={handleChange}
                   disabled={loading}
+                  className="bg-background/50"
                 />
               </div>
               <div className="grid gap-3">
@@ -177,6 +190,7 @@ export default function RegisterPage() {
                   onChange={handleChange}
                   required
                   disabled={loading}
+                  className="bg-background/50"
                 />
               </div>
             </div>

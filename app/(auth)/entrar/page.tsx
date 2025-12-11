@@ -52,19 +52,27 @@ export default function LoginPage() {
 
   return (
     <div className="flex min-h-screen w-full items-center justify-center bg-muted/40 p-4 lg:p-8 relative overflow-hidden">
-      <div className="absolute inset-0 -z-10 h-full w-full bg-background bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:14px_24px]">
+      <div className="absolute inset-0 -z-10 h-full w-full bg-background bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-size-[14px_24px]">
         <div className="absolute left-0 right-0 top-0 -z-10 m-auto h-[310px] w-[310px] rounded-full bg-primary/20 opacity-20 blur-[100px]"></div>
       </div>
 
-      <Card className="w-full max-w-sm shadow-2xl border-border/50 bg-card/95 backdrop-blur-sm">
+      <Card className="w-full max-w-md shadow-md border-border/50 bg-card/95 backdrop-blur-sm">
         <CardHeader className="space-y-1 text-center">
           <div className="flex justify-center mb-6">
             <Image
-              src="/logo_clips.svg"
-              alt="Logo"
+              src="/logo_clips_light.svg"
+              alt="Logo Clips"
               width={400}
               height={120}
-              className="h-auto w-auto max-h-12"
+              className="h-auto w-auto max-h-12 dark:hidden"
+              priority
+            />
+            <Image
+              src="/logo_clips.svg"
+              alt="Logo Clips"
+              width={400}
+              height={120}
+              className="h-auto w-auto max-h-12 hidden dark:block"
               priority
             />
           </div>

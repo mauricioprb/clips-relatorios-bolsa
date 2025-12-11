@@ -121,7 +121,7 @@ export function WeeklySlotsManager({ initialSlots }: { initialSlots: WeeklySlot[
       setIsDialogOpen(false);
       setEditingSlot(null);
       form.reset();
-    } catch (error) {
+    } catch {
       toast.error("Erro ao salvar horário");
     }
   };
@@ -133,7 +133,7 @@ export function WeeklySlotsManager({ initialSlots }: { initialSlots: WeeklySlot[
 
       setSlots((prev) => prev.filter((s) => s.id !== id));
       toast.success("Horário removido");
-    } catch (error) {
+    } catch {
       toast.error("Erro ao remover horário");
     }
   };
@@ -200,14 +200,6 @@ export function WeeklySlotsManager({ initialSlots }: { initialSlots: WeeklySlot[
                   >
                     {slots.length}
                   </Badge>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-6 w-6 opacity-0 transition-opacity group-hover:opacity-100"
-                    onClick={() => openNewDialog(dayIndex)}
-                  >
-                    <Plus className="h-3.5 w-3.5" />
-                  </Button>
                 </div>
               </CardTitle>
             </CardHeader>
@@ -354,7 +346,7 @@ export function WeeklySlotsManager({ initialSlots }: { initialSlots: WeeklySlot[
                   <FormItem>
                     <FormLabel>Descrição</FormLabel>
                     <FormControl>
-                      <Input placeholder="Ex: Aula de Estrura da Matéria" {...field} />
+                      <Input placeholder="Ex: Aula de Estrutura da Matéria" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

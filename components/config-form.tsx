@@ -136,9 +136,6 @@ export function ConfigForm({ initialData }: { initialData: any }) {
                   </FormItem>
                 )}
               />
-            </div>
-
-            <div className="space-y-4">
               <FormField
                 control={form.control}
                 name="laboratorios"

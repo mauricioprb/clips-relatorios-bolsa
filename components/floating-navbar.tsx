@@ -41,7 +41,7 @@ export function FloatingNavbar() {
 
   return (
     <div className="fixed top-4 left-0 right-0 z-50 flex justify-center">
-      <nav className="hidden md:flex items-center gap-1 rounded-full border border-border bg-background/80 p-2 shadow-lg backdrop-blur-md">
+      <nav className="hidden md:flex items-center gap-1 rounded-full border border-border bg-background/80 p-2 shadow-sm backdrop-blur-md">
         <div className="pl-4 pr-2">
           <Image
             src="/logo_clips_light.svg"
