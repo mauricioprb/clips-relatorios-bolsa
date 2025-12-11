@@ -9,11 +9,13 @@ export default async function AtividadesPadraoPage() {
     orderBy: [{ description: "asc" }],
   });
 
-  const serialized = activities.map((activity: { id: string; description: string; color: string }) => ({
-    id: activity.id,
-    description: activity.description,
-    color: activity.color,
-  }));
+  const serialized = activities.map(
+    (activity: { id: string; description: string; color: string }) => ({
+      id: activity.id,
+      description: activity.description,
+      color: activity.color,
+    }),
+  );
 
   return (
     <div className="space-y-4">
