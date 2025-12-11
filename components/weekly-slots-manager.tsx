@@ -263,7 +263,7 @@ export function WeeklySlotsManager({ initialSlots }: { initialSlots: WeeklySlot[
                       </div>
                     </div>
                     <div className="text-muted-foreground line-clamp-2">{slot.description}</div>
-                    <div className="flex items-center justify-end gap-2 pt-2 opacity-0 transition-opacity group-hover:opacity-100">
+                    <div className="flex items-center justify-end gap-2 pt-2">
                       <Button
                         variant="ghost"
                         size="icon"

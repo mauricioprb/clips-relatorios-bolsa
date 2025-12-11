@@ -94,7 +94,9 @@ export function CalendarProvider({
 
   // Create stable key from initialYear/Month to avoid re-renders
   const initialDateKey =
-    initialYear && initialMonth ? `${initialYear}-${initialMonth}` : initialDateKeyFromDate(initialDate);
+    initialYear && initialMonth
+      ? `${initialYear}-${initialMonth}`
+      : initialDateKeyFromDate(initialDate);
 
   function initialDateKeyFromDate(date?: Date) {
     return date ? `${date.getFullYear()}-${date.getMonth()}` : null;

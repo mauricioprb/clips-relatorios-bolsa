@@ -269,7 +269,7 @@ function HolidaysForm({ initialData }: { initialData: any }) {
                       Insira uma lista de feriados personalizados no formato JSON. A data pode ser
                       de qualquer ano — o sistema projetará automaticamente para os próximos anos.
                     </FormDescription>
-                    <pre className="mt-2 w-full rounded-md bg-slate-950 p-4 overflow-x-auto">
+                    <pre className="mt-2 w-full max-w-[calc(100vw-4rem)] rounded-md bg-slate-950 p-4 overflow-x-auto">
                       <code className="text-white">
                         {`[
   {
