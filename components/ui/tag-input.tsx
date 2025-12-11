@@ -5,7 +5,10 @@ import { X } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 
-interface TagInputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "value" | "onChange"> {
+interface TagInputProps extends Omit<
+  React.InputHTMLAttributes<HTMLInputElement>,
+  "value" | "onChange"
+> {
   value: string[];
   onChange: (value: string[]) => void;
   placeholder?: string;
@@ -48,7 +51,7 @@ export function TagInput({
     <div
       className={cn(
         "flex min-h-9 w-full flex-wrap gap-2 rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-within:ring-1 focus-within:ring-ring",
-        className
+        className,
       )}
     >
       {value.map((tag, index) => (

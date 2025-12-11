@@ -146,10 +146,7 @@ export function ConfigForm({ initialData }: { initialData: any }) {
                   <FormItem>
                     <FormLabel>Laboratórios</FormLabel>
                     <FormControl>
-                      <TagInput
-                        {...field}
-                        placeholder="Digite e pressione Enter..."
-                      />
+                      <TagInput {...field} placeholder="Digite e pressione Enter..." />
                     </FormControl>
                     <FormDescription>
                       Adicione um ou mais laboratórios. Pressione Enter ou vírgula para adicionar.

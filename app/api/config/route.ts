@@ -30,7 +30,7 @@ export async function POST(req: NextRequest) {
   ) {
     return NextResponse.json(
       { message: "Todos os campos são obrigatórios e a carga horária deve ser maior que zero." },
-      { status: 400 }
+      { status: 400 },
     );
   }
 
