@@ -88,16 +88,27 @@ export function CalendarProvider({
     settings.agendaModeGroupBy,
   );
 
-  const [selectedDate, setSelectedDate] = useState(initialDate || new Date());
+  // Create stable key from initialDate to avoid re-renders
+  const initialDateKey = initialDate
+    ? `${initialDate.getFullYear()}-${initialDate.getMonth()}`
+    : null;
+
+  const [selectedDate, setSelectedDate] = useState(() => initialDate || new Date());
   const [selectedUserId, setSelectedUserId] = useState<IUser["id"] | "all">("all");
   const [selectedColors, setSelectedColors] = useState<TEventColor[]>([]);
 
-  // Sync selectedDate when initialDate prop changes
+  // Sync selectedDate only when year/month actually changes
   useEffect(() => {
     if (initialDate) {
-      setSelectedDate(initialDate);
+      setSelectedDate((prev) => {
+        const prevKey = `${prev.getFullYear()}-${prev.getMonth()}`;
+        if (prevKey !== initialDateKey) {
+          return initialDate;
+        }
+        return prev;
+      });
     }
-  }, [initialDate?.getTime()]);
+  }, [initialDateKey]);
 
   const [allEvents, setAllEvents] = useState<IEvent[]>(events || []);
   const [filteredEvents, setFilteredEvents] = useState<IEvent[]>(events || []);
