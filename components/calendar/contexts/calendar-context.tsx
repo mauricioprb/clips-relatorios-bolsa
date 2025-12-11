@@ -92,6 +92,13 @@ export function CalendarProvider({
   const [selectedUserId, setSelectedUserId] = useState<IUser["id"] | "all">("all");
   const [selectedColors, setSelectedColors] = useState<TEventColor[]>([]);
 
+  // Sync selectedDate when initialDate prop changes
+  useEffect(() => {
+    if (initialDate) {
+      setSelectedDate(initialDate);
+    }
+  }, [initialDate?.getTime()]);
+
   const [allEvents, setAllEvents] = useState<IEvent[]>(events || []);
   const [filteredEvents, setFilteredEvents] = useState<IEvent[]>(events || []);
   const defaultUser = users?.[0] || { id: "main-user", name: "Bolsista", picturePath: null };
