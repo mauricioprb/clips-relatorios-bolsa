@@ -25,7 +25,7 @@ function getEasterDate(year: number): Date {
   return new Date(year, month - 1, day);
 }
 
-export function getHolidays(year: number): Holiday[] {
+export function getHolidays(year: number, customHolidays: Holiday[] = []): Holiday[] {
   const easter = getEasterDate(year);
   const carnaval = subDays(easter, 47);
   const paixaoCristo = subDays(easter, 2);
@@ -35,14 +35,18 @@ export function getHolidays(year: number): Holiday[] {
     { date: `${year}-01-01`, name: "Confraternização Universal", scope: "nacional" },
     { date: `${year}-04-21`, name: "Tiradentes", scope: "nacional" },
     { date: `${year}-05-01`, name: "Dia Mundial do Trabalho", scope: "nacional" },
-    { date: `${year}-05-17`, name: "Instalação do Município", scope: "municipal" },
-    { date: `${year}-08-15`, name: "Coroação de Nossa Senhora Medianeira", scope: "municipal" },
+    // { date: `${year}-05-17`, name: "Instalação do Município", scope: "municipal" },
+    // { date: `${year}-08-15`, name: "Coroação de Nossa Senhora Medianeira", scope: "municipal" },
     { date: `${year}-09-07`, name: "Independência do Brasil", scope: "nacional" },
     { date: `${year}-09-20`, name: "Revolução Farroupilha", scope: "estadual" },
     { date: `${year}-10-12`, name: "Nossa Senhora Aparecida", scope: "nacional" },
     { date: `${year}-11-02`, name: "Finados", scope: "nacional" },
     { date: `${year}-11-15`, name: "Proclamação da República", scope: "nacional" },
-    { date: `${year}-11-20`, name: "Dia Nacional de Zumbi e da Consciência Negra", scope: "nacional" },
+    {
+      date: `${year}-11-20`,
+      name: "Dia Nacional de Zumbi e da Consciência Negra",
+      scope: "nacional",
+    },
     { date: `${year}-12-25`, name: "Natal", scope: "nacional" },
   ];
 
@@ -52,10 +56,18 @@ export function getHolidays(year: number): Holiday[] {
     { date: format(corpusChristi, "yyyy-MM-dd"), name: "Corpus Christi", scope: "municipal" },
   ];
 
-  return [...fixedHolidays, ...variableHolidays].sort((a, b) => a.date.localeCompare(b.date));
+  // Filter custom holidays for the requested year
+  const yearCustomHolidays = customHolidays.filter((h) => h.date.startsWith(`${year}-`));
+
+  return [...fixedHolidays, ...variableHolidays, ...yearCustomHolidays].sort((a, b) =>
+    a.date.localeCompare(b.date),
+  );
 }
 
-export function getHoliday(dateOrString: Date | string): Holiday | undefined {
+export function getHoliday(
+  dateOrString: Date | string,
+  customHolidays: Holiday[] = [],
+): Holiday | undefined {
   let dateString: string;
   let year: number;
 
@@ -67,6 +79,6 @@ export function getHoliday(dateOrString: Date | string): Holiday | undefined {
     dateString = format(dateOrString, "yyyy-MM-dd");
   }
 
-  const holidays = getHolidays(year);
+  const holidays = getHolidays(year, customHolidays);
   return holidays.find((h) => h.date === dateString);
 }

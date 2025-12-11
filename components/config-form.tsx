@@ -18,10 +18,11 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { TagInput } from "@/components/ui/tag-input";
 import { Loader2 } from "lucide-react";
 
-const formSchema = z.object({
+const profileSchema = z.object({
   email: z.string().email().optional(),
   bolsista: z.string().min(2, {
     message: "Nome do bolsista deve ter pelo menos 2 caracteres.",
@@ -40,9 +41,14 @@ const formSchema = z.object({
   }),
 });
 
-export type ConfigData = z.infer<typeof formSchema>;
+const holidaysSchema = z.object({
+  customHolidays: z.string().optional(),
+});
 
-export function ConfigForm({ initialData }: { initialData: any }) {
+type ProfileData = z.infer<typeof profileSchema>;
+type HolidaysData = z.infer<typeof holidaysSchema>;
+
+function ProfileForm({ initialData }: { initialData: any }) {
   const [isLoading, setIsLoading] = useState(false);
 
   // Converte o formato antigo (se houver) ou usa o array de strings
@@ -53,8 +59,8 @@ export function ConfigForm({ initialData }: { initialData: any }) {
         : initialData.laboratorios.map((l: any) => l.value)
       : [];
 
-  const form = useForm({
-    resolver: zodResolver(formSchema),
+  const form = useForm<ProfileData>({
+    resolver: zodResolver(profileSchema),
     defaultValues: {
       email: initialData?.email || "",
       bolsista: initialData?.bolsista || "",
@@ -65,7 +71,7 @@ export function ConfigForm({ initialData }: { initialData: any }) {
     },
   });
 
-  async function onSubmit(values: ConfigData) {
+  async function onSubmit(values: ProfileData) {
     setIsLoading(true);
     try {
       const res = await fetch("/api/config", {
@@ -76,10 +82,10 @@ export function ConfigForm({ initialData }: { initialData: any }) {
 
       if (!res.ok) throw new Error("Erro ao salvar");
 
-      toast.success("Configurações salvas com sucesso.");
+      toast.success("Dados do perfil salvos com sucesso.");
     } catch (error) {
       console.error(error);
-      toast.error("Não foi possível salvar as configurações.");
+      toast.error("Não foi possível salvar os dados do perfil.");
     } finally {
       setIsLoading(false);
     }
@@ -192,12 +198,109 @@ export function ConfigForm({ initialData }: { initialData: any }) {
             <div className="flex justify-end">
               <Button type="submit" disabled={isLoading}>
                 {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                Salvar alterações
+                Salvar Perfil
               </Button>
             </div>
           </form>
         </Form>
       </CardContent>
     </Card>
+  );
+}
+
+function HolidaysForm({ initialData }: { initialData: any }) {
+  const [isLoading, setIsLoading] = useState(false);
+
+  const form = useForm<HolidaysData>({
+    resolver: zodResolver(holidaysSchema),
+    defaultValues: {
+      customHolidays: initialData?.customHolidays || "",
+    },
+  });
+
+  async function onSubmit(values: HolidaysData) {
+    setIsLoading(true);
+    try {
+      const res = await fetch("/api/config", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(values),
+      });
+
+      if (!res.ok) throw new Error("Erro ao salvar");
+
+      toast.success("Feriados salvos com sucesso.");
+    } catch (error) {
+      console.error(error);
+      toast.error("Não foi possível salvar os feriados.");
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Feriados Personalizados</CardTitle>
+        <CardDescription>
+          Configure feriados municipais ou específicos que não estão no calendário nacional.
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            <div className="grid gap-4">
+              <FormField
+                control={form.control}
+                name="customHolidays"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Feriados (JSON)</FormLabel>
+                    <FormControl>
+                      <Textarea
+                        placeholder='[{"date": "2025-05-17", "name": "Aniversário da Cidade", "scope": "municipal"}]'
+                        className="font-mono text-xs"
+                        rows={10}
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      Insira uma lista de feriados personalizados no formato JSON. Exemplo:
+                    </FormDescription>
+                    <pre className="mt-2 w-full rounded-md bg-slate-950 p-4 overflow-x-auto">
+                      <code className="text-white">
+                        {`[
+  {
+    "date": "2025-05-17",
+    "name": "Aniversário da Cidade",
+    "scope": "municipal"
+  }
+]`}
+                      </code>
+                    </pre>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+            <div className="flex justify-end">
+              <Button type="submit" disabled={isLoading}>
+                {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                Salvar Feriados
+              </Button>
+            </div>
+          </form>
+        </Form>
+      </CardContent>
+    </Card>
+  );
+}
+
+export function ConfigForm({ initialData }: { initialData: any }) {
+  return (
+    <div className="space-y-6">
+      <ProfileForm initialData={initialData} />
+      <HolidaysForm initialData={initialData} />
+    </div>
   );
 }

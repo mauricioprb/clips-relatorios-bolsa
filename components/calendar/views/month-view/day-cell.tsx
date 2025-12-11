@@ -7,6 +7,7 @@ import { useMemo, useCallback } from "react";
 
 import { cn } from "@/lib/utils";
 import { getHoliday } from "@/lib/holidays";
+import { useCalendar } from "@/components/calendar/contexts/calendar-context";
 import { EventListDialog } from "@/components/calendar/dialogs/events-list-dialog";
 import { DroppableArea } from "@/components/calendar/dnd/droppable-area";
 import { getMonthCellEvents } from "@/components/calendar/helpers";
@@ -45,8 +46,9 @@ const MAX_VISIBLE_EVENTS = 3;
 
 export function DayCell({ cell, events, eventPositions }: IProps) {
   const { day, currentMonth, date } = cell;
+  const { customHolidays } = useCalendar();
   const isMobile = useMediaQuery("(max-width: 768px)");
-  const holiday = useMemo(() => getHoliday(date), [date]);
+  const holiday = useMemo(() => getHoliday(date, customHolidays), [date, customHolidays]);
 
   // Memoize cellEvents and currentCellMonth for performance
   const { cellEvents, currentCellMonth } = useMemo(() => {

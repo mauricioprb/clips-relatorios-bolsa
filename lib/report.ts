@@ -45,6 +45,15 @@ export async function fetchReportData(year: number, month: number, userId: strin
         weeklyWorkloadHours: 0,
       };
 
+  let customHolidays = [];
+  try {
+    if (user?.customHolidays) {
+      customHolidays = JSON.parse(user.customHolidays);
+    }
+  } catch (e) {
+    console.error("Failed to parse custom holidays", e);
+  }
+
   const { start, end } = getMonthRange(year, month);
   const entries = await prisma.dayEntry.findMany({
     where: {
@@ -60,26 +69,26 @@ export async function fetchReportData(year: number, month: number, userId: strin
   }, {});
 
   const days = getWorkingDays(year, month)
-    .filter((day) => !getHoliday(toDayKey(day)))
+    .filter((day) => !getHoliday(toDayKey(day), customHolidays))
     .map((day) => {
       const key = toDayKey(day);
       const dayEntries = entriesByDay[key] || [];
-    const scheduleText =
-      dayEntries.length > 0
-        ? dayEntries.map((entry) => formatInterval(entry.startTime, entry.endTime)).join(" | ")
-        : "-";
-    const activitiesText =
-      dayEntries.length > 0 ? dayEntries.map((entry) => entry.description).join("; ") : "-";
-    const dailyHours = dayEntries.reduce((sum, entry) => sum + (entry.hours || 0), 0);
+      const scheduleText =
+        dayEntries.length > 0
+          ? dayEntries.map((entry) => formatInterval(entry.startTime, entry.endTime)).join(" | ")
+          : "-";
+      const activitiesText =
+        dayEntries.length > 0 ? dayEntries.map((entry) => entry.description).join("; ") : "-";
+      const dailyHours = dayEntries.reduce((sum, entry) => sum + (entry.hours || 0), 0);
 
-    return {
-      date: day,
-      dayLabel: day.toLocaleDateString("pt-BR", { timeZone: "UTC" }),
-      scheduleText,
-      activitiesText,
-      dailyHours,
-    };
-  });
+      return {
+        date: day,
+        dayLabel: day.toLocaleDateString("pt-BR", { timeZone: "UTC" }),
+        scheduleText,
+        activitiesText,
+        dailyHours,
+      };
+    });
 
   const totalHours = days.reduce((sum, day) => sum + day.dailyHours, 0);
 

@@ -31,6 +31,7 @@ export default async function ConfigPage() {
     laboratorios: user.laboratorios.length > 0 ? user.laboratorios : [],
     bolsa: user.bolsa || "",
     weeklyWorkloadHours: user.weeklyWorkloadHours || 20,
+    customHolidays: user.customHolidays || "",
   };
 
   return (

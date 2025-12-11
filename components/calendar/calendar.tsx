@@ -7,11 +7,28 @@ import { getEvents, getUsers } from "@/components/calendar/requests";
 import { cookies } from "next/headers";
 import { verifySessionToken, SESSION_COOKIE } from "@/lib/auth";
 
+import { prisma } from "@/lib/prisma";
+
 async function getCalendarData(year: number, month: number, userId: string) {
   const users = await getUsers(userId);
   const defaultUser = users[0];
   const events = await getEvents(year, month, defaultUser);
-  return { events, users };
+
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { customHolidays: true },
+  });
+
+  let customHolidays = [];
+  try {
+    if (user?.customHolidays) {
+      customHolidays = JSON.parse(user.customHolidays);
+    }
+  } catch (e) {
+    console.error("Failed to parse custom holidays", e);
+  }
+
+  return { events, users, customHolidays };
 }
 
 type Props = {
@@ -33,10 +50,16 @@ export async function Calendar({ year, month }: Props) {
   const targetMonth = month || today.getMonth() + 1;
   const initialDate = new Date(targetYear, targetMonth - 1, 1);
 
-  const { events, users } = await getCalendarData(targetYear, targetMonth, session.id);
+  const { events, users, customHolidays } = await getCalendarData(targetYear, targetMonth, session.id);
 
   return (
-    <CalendarProvider events={events} users={users} view="month" initialDate={initialDate}>
+    <CalendarProvider
+      events={events}
+      users={users}
+      view="month"
+      initialDate={initialDate}
+      customHolidays={customHolidays}
+    >
       <DndProvider showConfirmation={false}>
         <div className="w-full border rounded-xl">
           <CalendarHeader />

@@ -5,6 +5,7 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { useLocalStorage } from "@/components/calendar/hooks";
 import type { IEvent, IUser } from "@/components/calendar/interfaces";
 import type { TCalendarView, TEventColor } from "@/components/calendar/types";
+import type { Holiday } from "@/lib/holidays";
 
 interface ICalendarContext {
   selectedDate: Date;
@@ -29,6 +30,7 @@ interface ICalendarContext {
   removeEvent: (eventId: string) => void;
   refreshMonth: (year: number, month: number) => Promise<void>;
   clearFilter: () => void;
+  customHolidays: Holiday[];
 }
 
 interface CalendarSettings {
@@ -63,6 +65,7 @@ export function CalendarProvider({
   badge = "colored",
   view = "month",
   initialDate,
+  customHolidays = [],
 }: {
   children: React.ReactNode;
   users: IUser[];
@@ -70,6 +73,7 @@ export function CalendarProvider({
   view?: TCalendarView;
   badge?: "dot" | "colored";
   initialDate?: Date;
+  customHolidays?: Holiday[];
 }) {
   const [settings, setSettings] = useLocalStorage<CalendarSettings>("calendar-settings", {
     ...DEFAULT_SETTINGS,
@@ -313,6 +317,7 @@ export function CalendarProvider({
     removeEvent,
     refreshMonth,
     clearFilter,
+    customHolidays,
   };
 
   return <CalendarContext.Provider value={value}>{children}</CalendarContext.Provider>;

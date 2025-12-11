@@ -82,6 +82,15 @@ class MonthService {
 
     const weeklyTarget = user.weeklyWorkloadHours || DEFAULT_WEEKLY_WORKLOAD;
 
+    let customHolidays = [];
+    try {
+      if (user.customHolidays) {
+        customHolidays = JSON.parse(user.customHolidays);
+      }
+    } catch (e) {
+      console.error("Failed to parse custom holidays", e);
+    }
+
     const weeklySlots = await weeklySlotService.list();
     const defaults = await defaultActivityService.list();
     const priorityQueue = buildPriorityQueue(defaults);
@@ -115,7 +124,7 @@ class MonthService {
     for (const week of workingWeeks) {
       for (const day of week) {
         const key = toDayKey(day);
-        if (getHoliday(key)) {
+        if (getHoliday(key, customHolidays)) {
           continue;
         }
 
@@ -175,7 +184,7 @@ class MonthService {
       for (let i = 0; i < week.length; i += 1) {
         const day = week[i];
         const key = toDayKey(day);
-        if (getHoliday(key)) {
+        if (getHoliday(key, customHolidays)) {
           continue;
         }
 

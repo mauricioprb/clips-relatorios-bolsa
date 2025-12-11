@@ -52,6 +52,7 @@ model User {
   laboratorios        String[]
   bolsa               String?
   weeklyWorkloadHours Float   @default(20)
+  customHolidays      String? // JSON string com feriados personalizados
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
