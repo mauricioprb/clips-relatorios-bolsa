@@ -55,7 +55,8 @@ export async function Calendar({ year, month }: Props) {
       events={events}
       users={users}
       view="month"
-      initialDate={initialDate}
+      initialYear={targetYear}
+      initialMonth={targetMonth}
       customHolidays={customHolidays}
     >
       <DndProvider showConfirmation={false}>

@@ -54,10 +54,6 @@ export function DateNavigator({ view, events }: IProps) {
     const currentYear = date.getFullYear();
     router.replace(`/mes?ano=${currentYear}&mes=${currentMonth}`);
   };
-
-  // Removed useEffect that caused infinite loop by syncing state -> URL automatically
-  // URL updates are now triggered only by user interaction
-
   return (
     <div className="space-y-0.5">
       <div className="flex items-center gap-2">

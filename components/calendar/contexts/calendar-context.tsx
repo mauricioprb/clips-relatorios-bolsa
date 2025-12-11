@@ -65,6 +65,8 @@ export function CalendarProvider({
   badge = "colored",
   view = "month",
   initialDate,
+  initialYear,
+  initialMonth,
   customHolidays = [],
 }: {
   children: React.ReactNode;
@@ -73,6 +75,8 @@ export function CalendarProvider({
   view?: TCalendarView;
   badge?: "dot" | "colored";
   initialDate?: Date;
+  initialYear?: number;
+  initialMonth?: number;
   customHolidays?: Holiday[];
 }) {
   const [settings, setSettings] = useLocalStorage<CalendarSettings>("calendar-settings", {
@@ -88,21 +92,39 @@ export function CalendarProvider({
     settings.agendaModeGroupBy,
   );
 
-  // Create stable key from initialDate to avoid re-renders
-  const initialDateKey = initialDate
-    ? `${initialDate.getFullYear()}-${initialDate.getMonth()}`
-    : null;
+  // Create stable key from initialYear/Month to avoid re-renders
+  const initialDateKey =
+    initialYear && initialMonth ? `${initialYear}-${initialMonth}` : initialDateKeyFromDate(initialDate);
 
-  const [selectedDate, setSelectedDate] = useState(() => initialDate || new Date());
+  function initialDateKeyFromDate(date?: Date) {
+    return date ? `${date.getFullYear()}-${date.getMonth()}` : null;
+  }
+
+  const [selectedDate, setSelectedDate] = useState(() => {
+    if (initialYear && initialMonth) {
+      return new Date(initialYear, initialMonth - 1, 1);
+    }
+    return initialDate || new Date();
+  });
   const [selectedUserId, setSelectedUserId] = useState<IUser["id"] | "all">("all");
   const [selectedColors, setSelectedColors] = useState<TEventColor[]>([]);
 
   // Sync selectedDate only when year/month actually changes
   useEffect(() => {
-    if (initialDate) {
+    if (initialYear && initialMonth) {
+      setSelectedDate((prev) => {
+        const prevKey = `${prev.getFullYear()}-${prev.getMonth() + 1}`;
+        const newKey = `${initialYear}-${initialMonth}`;
+        if (prevKey !== newKey) {
+          return new Date(initialYear, initialMonth - 1, 1);
+        }
+        return prev;
+      });
+    } else if (initialDate) {
       setSelectedDate((prev) => {
         const prevKey = `${prev.getFullYear()}-${prev.getMonth()}`;
-        if (prevKey !== initialDateKey) {
+        const newKey = initialDateKeyFromDate(initialDate);
+        if (prevKey !== newKey && initialDate) {
           return initialDate;
         }
         return prev;
