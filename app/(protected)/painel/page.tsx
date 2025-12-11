@@ -20,9 +20,9 @@ export default async function Dashboard() {
 
   const [user, weeklyCount, defaultsCount, entriesCount] = await Promise.all([
     prisma.user.findUnique({ where: { id: session.id } }),
-    prisma.weeklySlot.count(),
-    prisma.defaultActivity.count(),
-    prisma.dayEntry.count(),
+    prisma.weeklySlot.count({ where: { userId: session.id } }),
+    prisma.defaultActivity.count({ where: { userId: session.id } }),
+    prisma.dayEntry.count({ where: { userId: session.id } }),
   ]);
 
   return (

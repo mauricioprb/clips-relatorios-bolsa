@@ -3,9 +3,17 @@ export const dynamic = "force-dynamic";
 import { DefaultActivitiesManager } from "@/components/default-activities-manager";
 import { PageHeader } from "@/components/page-header";
 import { prisma } from "@/lib/prisma";
+import { getSessionFromCookies } from "@/lib/auth";
+import { redirect } from "next/navigation";
 
 export default async function AtividadesPadraoPage() {
+  const session = await getSessionFromCookies();
+  if (!session?.id) {
+    redirect("/entrar");
+  }
+
   const activities = await prisma.defaultActivity.findMany({
+    where: { userId: session.id },
     orderBy: [{ description: "asc" }],
   });
 

@@ -84,8 +84,8 @@ class MonthService {
 
     const customHolidays = parseAndExpandCustomHolidays(user.customHolidays);
 
-    const weeklySlots = await weeklySlotService.list();
-    const defaults = await defaultActivityService.list();
+    const weeklySlots = await weeklySlotService.list(userId);
+    const defaults = await defaultActivityService.list(userId);
     const priorityQueue = buildPriorityQueue(defaults);
     const dailyTarget = weeklyTarget / WORKING_DAYS_PER_WEEK;
 
@@ -101,7 +101,10 @@ class MonthService {
 
     const { start, end } = getMonthRange(year, month);
     const existingEntries = await prisma.dayEntry.findMany({
-      where: { date: { gte: start, lt: end } },
+      where: {
+        userId,
+        date: { gte: start, lt: end },
+      },
     });
     const entriesByDay = existingEntries.reduce<Record<string, DayEntry[]>>((acc, entry) => {
       const key = toDayKey(entry.date);
@@ -159,6 +162,7 @@ class MonthService {
               endTime: slot.endTime,
               hours,
               color: "cinza",
+              userId,
             },
           });
           dayEntries.push(entry);
@@ -197,6 +201,7 @@ class MonthService {
           priorityQueue,
           priorityIndex,
           created,
+          userId,
         });
 
         entriesByDay[key] = updatedEntries;
@@ -220,6 +225,7 @@ class MonthService {
     priorityQueue,
     priorityIndex,
     created,
+    userId,
   }: {
     day: Date;
     dayEntries: DayEntry[];
@@ -227,6 +233,7 @@ class MonthService {
     priorityQueue: DefaultActivity[];
     priorityIndex: number;
     created: { id: string; date: Date }[];
+    userId: string;
   }) {
     let remaining = neededHours;
     let added = 0;
@@ -284,6 +291,7 @@ class MonthService {
             endTime: computedEndTime,
             hours: hoursToUse,
             color: activity.color,
+            userId,
           },
         });
 

@@ -50,6 +50,7 @@ export async function fetchReportData(year: number, month: number, userId: strin
   const { start, end } = getMonthRange(year, month);
   const entries = await prisma.dayEntry.findMany({
     where: {
+      userId,
       date: { gte: start, lt: end },
     },
     orderBy: [{ date: "asc" }, { startTime: "asc" }],

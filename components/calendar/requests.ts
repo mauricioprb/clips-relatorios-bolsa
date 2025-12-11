@@ -18,7 +18,10 @@ export const getEvents = async (year: number, month: number, user: IUser) => {
   const end = new Date(Date.UTC(year + 1, 0, 1, 0, 0, 0));
 
   const entries = await prisma.dayEntry.findMany({
-    where: { date: { gte: start, lt: end } },
+    where: {
+      userId: user.id,
+      date: { gte: start, lt: end },
+    },
     orderBy: [{ date: "asc" }, { startTime: "asc" }],
   });
 
