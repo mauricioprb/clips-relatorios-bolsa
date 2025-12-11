@@ -181,12 +181,12 @@ export function DefaultActivitiesManager({
   return (
     <div className="space-y-4">
       <Card>
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
+        <CardHeader className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between sm:space-y-0 pb-4">
           <div className="space-y-1">
             <CardTitle>Gerenciar Atividades</CardTitle>
             <CardDescription>{activities.length} atividade(s) cadastrada(s)</CardDescription>
           </div>
-          <Button onClick={openNewDialog}>
+          <Button onClick={openNewDialog} className="w-full sm:w-auto">
             <Plus className="mr-2 h-4 w-4" />
             Nova Atividade
           </Button>
@@ -228,7 +228,7 @@ export function DefaultActivitiesManager({
                         <div className="flex items-center gap-2">
                           <div
                             className={cn(
-                              "h-4 w-4 rounded-full",
+                              "h-4 w-4 shrink-0 rounded-full",
                               BG_COLORS[activity.color as keyof typeof BG_COLORS],
                             )}
                           />
@@ -276,7 +276,7 @@ export function DefaultActivitiesManager({
             <DialogDescription>Preencha os dados da atividade padrão abaixo.</DialogDescription>
           </DialogHeader>
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
               <FormField
                 control={form.control}
                 name="description"
@@ -306,7 +306,9 @@ export function DefaultActivitiesManager({
                         {PRIORITY_COLORS.map((color) => (
                           <SelectItem key={color} value={color}>
                             <div className="flex items-center gap-2">
-                              <div className={cn("h-3 w-3 rounded-full", BG_COLORS[color])} />
+                              <div
+                                className={cn("h-3 w-3 shrink-0 rounded-full", BG_COLORS[color])}
+                              />
                               <span className="capitalize">{PRIORITY_LABELS[color] || color}</span>
                             </div>
                           </SelectItem>
@@ -317,7 +319,7 @@ export function DefaultActivitiesManager({
                   </FormItem>
                 )}
               />
-              <DialogFooter>
+              <DialogFooter className="gap-2">
                 <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)}>
                   Cancelar
                 </Button>

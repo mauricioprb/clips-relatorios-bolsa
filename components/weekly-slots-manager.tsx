@@ -207,7 +207,7 @@ export function WeeklySlotsManager({ initialSlots }: { initialSlots: WeeklySlot[
         title="Grade Semanal"
         description="Gerencie seus horários recorrentes de atendimento."
         actions={
-          <Button onClick={() => openNewDialog()}>
+          <Button onClick={() => openNewDialog()} className="w-full sm:w-auto">
             <Plus className="mr-2 h-4 w-4" />
             Novo Horário
           </Button>
@@ -317,7 +317,7 @@ export function WeeklySlotsManager({ initialSlots }: { initialSlots: WeeklySlot[
           </DialogHeader>
 
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
               <FormField
                 control={form.control}
                 name="weekday"
@@ -343,7 +343,7 @@ export function WeeklySlotsManager({ initialSlots }: { initialSlots: WeeklySlot[
                 )}
               />
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 gap-6">
                 <FormField
                   control={form.control}
                   name="startTime"

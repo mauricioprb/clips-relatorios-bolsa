@@ -37,7 +37,9 @@ export function CalendarHeader() {
   const generatePdf = async () => {
     setLoadingPdf(true);
     try {
-      const res = await fetch(`/api/month/report-pdf?ano=${year}&mes=${month}`, { method: "GET" });
+      const res = await fetch(`/api/month/report-pdf?ano=${year}&mes=${month}`, {
+        method: "GET",
+      });
       if (res.ok) {
         const blob = await res.blob();
         const url = URL.createObjectURL(blob);
@@ -71,7 +73,12 @@ export function CalendarHeader() {
           initial="initial"
           animate="animate"
         >
-          <div className="options flex-wrap flex items-center gap-4 md:gap-2">
+          <div className="flex items-center justify-between gap-2 md:hidden">
+            <Views />
+            <FilterEvents />
+          </div>
+
+          <div className="hidden md:flex items-center gap-4 md:gap-2">
             <FilterEvents />
             <Views />
           </div>
@@ -79,7 +86,7 @@ export function CalendarHeader() {
       </div>
 
       <div className="flex flex-col gap-4 px-4 pb-4 md:flex-row md:items-center md:justify-between md:gap-0">
-        <div className="flex flex-col gap-2 md:flex-row md:items-center md:gap-4">
+        <div className="flex flex-col gap-4 md:flex-row md:items-center md:gap-4">
           <Button onClick={fillBlanks} disabled={loadingFill} className="w-full md:w-auto">
             <CalendarCheck className="mr-2 h-4 w-4" />
             {loadingFill ? "Preenchendo..." : "Completar dias"}

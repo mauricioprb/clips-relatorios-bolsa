@@ -102,7 +102,7 @@ function ProfileForm({ initialData }: { initialData: any }) {
       <CardContent>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            <div className="grid gap-4 md:grid-cols-2">
+            <div className="grid gap-6 md:grid-cols-2">
               <FormField
                 control={form.control}
                 name="email"
@@ -160,7 +160,7 @@ function ProfileForm({ initialData }: { initialData: any }) {
               />
             </div>
 
-            <div className="grid gap-4 md:grid-cols-2">
+            <div className="grid gap-6 md:grid-cols-2">
               <FormField
                 control={form.control}
                 name="bolsa"
@@ -196,7 +196,7 @@ function ProfileForm({ initialData }: { initialData: any }) {
               />
             </div>
             <div className="flex justify-end">
-              <Button type="submit" disabled={isLoading}>
+              <Button type="submit" disabled={isLoading} className="w-full sm:w-auto">
                 {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 Salvar Perfil
               </Button>
@@ -255,7 +255,7 @@ function HolidaysForm({ initialData }: { initialData: any }) {
                 control={form.control}
                 name="customHolidays"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="min-w-0">
                     <FormLabel>Feriados (JSON)</FormLabel>
                     <FormControl>
                       <Textarea
@@ -269,7 +269,7 @@ function HolidaysForm({ initialData }: { initialData: any }) {
                       Insira uma lista de feriados personalizados no formato JSON. A data pode ser
                       de qualquer ano — o sistema projetará automaticamente para os próximos anos.
                     </FormDescription>
-                    <pre className="mt-2 w-full max-w-[calc(100vw-4rem)] rounded-md bg-slate-950 p-4 overflow-x-auto">
+                    <pre className="mt-2 w-full max-w-full rounded-md bg-slate-950 p-4 overflow-x-auto">
                       <code className="text-white">
                         {`[
   {
@@ -286,7 +286,7 @@ function HolidaysForm({ initialData }: { initialData: any }) {
               />
             </div>
             <div className="flex justify-end">
-              <Button type="submit" disabled={isLoading}>
+              <Button type="submit" disabled={isLoading} className="w-full sm:w-auto">
                 {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 Salvar Feriados
               </Button>
